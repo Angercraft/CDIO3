@@ -3,6 +3,14 @@ package juniorMatador;
 public class Player {
     private String name;
     private boolean playerTurn = false;
+    Money money;
+    Buildings buildings;
+
+    Player(String name) {
+        this.name = name;
+        money = new Money();
+        buildings = new Buildings();
+    }
 
     public void setName(String name) {
         this.name = name;
