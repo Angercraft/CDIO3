@@ -4,6 +4,7 @@ public class Player {
     private String name;
     private boolean playerTurn = false;
     private int playerNumber;
+    private int playerPos = 0;
     Money money;
     Buildings buildings;
 
@@ -36,6 +37,14 @@ public class Player {
 
     public boolean getPlayerTurn () {
         return this.playerTurn;
+    }
+
+    public void setPlayerPos(int playerPos) {
+        this.playerPos = playerPos;
+    }
+
+    public int getPlayerPos() {
+        return playerPos;
     }
 
     @Override

@@ -42,16 +42,7 @@ public class UIController {
     }
 
     public void updatePlayerPosition(Player player, int sum) {
-        //test remove later
-        fields[10].setCar(uiPlayers[0], true);
-        System.out.println(fields[10].hasCar(uiPlayers[0]));
-        fields[10].setCar(uiPlayers[0], false);
-        System.out.println(fields[10].hasCar(uiPlayers[0]));
-        fields[10].removeAllCars();
-        System.out.println(fields[10].hasCar(uiPlayers[0]));
-
-
-        int currentField = checkPlayerPosition();
+        int currentField = player.getPlayerPos();
         System.out.println("currentField: "+currentField);
         int newField;
         if (currentField + sum > 39) {
@@ -61,23 +52,11 @@ public class UIController {
             System.out.println("New field is: "+newField);
         }
         fields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
-        fields[0].removeAllCars();
         fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
+        player.setPlayerPos(newField);
         System.out.println("-------------------------------------------------------------------------");
 
 
-    }
-
-    public int checkPlayerPosition() {
-        int playerPos;
-        for (int i = 0 ; i < fields.length ; i++) {
-            if (fields[i].hasCar(uiPlayers[0])) {
-                playerPos = fields[i].getNumber()-1;
-                System.out.println("checkPlayerPos method gives: "+playerPos);
-                return i;
-            }
-        }
-        return 0;
     }
 
     //Creates the button for dicerolls and sets new dice.
@@ -109,7 +88,7 @@ public class UIController {
         int arrayNumber = 0;
         for(int i = 0 ; i < fields.length ; i++) {
             if (fields[i].hasCar(uiPlayers[0])) {
-                arrayNumber = fields[i].getNumber()-1;
+                //arrayNumber = fields[i].getNumber()-1;
             }
         }
         //DEBUG PRINT
