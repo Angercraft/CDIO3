@@ -3,11 +3,13 @@ package juniorMatador;
 public class Player {
     private String name;
     private boolean playerTurn = false;
+    private int playerNumber;
     Money money;
     Buildings buildings;
 
-    Player(String name) {
+    Player(String name, int playerNumber) {
         this.name = name;
+        this.playerNumber = playerNumber;
         money = new Money();
         buildings = new Buildings();
     }
@@ -18,6 +20,14 @@ public class Player {
 
     public String getName() {
         return this.name;
+    }
+
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
     public void setPlayerTurn (boolean playerTurn) {

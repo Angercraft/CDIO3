@@ -14,9 +14,11 @@ public class UIController {
     private GUI_Player[] uiPlayers;
 
     //Method for initial setup.
-    public void setup() {
+    public void setupUI() {
         fields = gui.getFields();
-        setCar(0);
+        for (int i = 0 ; i < uiPlayers.length ; i++) {
+            fields[0].setCar(uiPlayers[i], true);
+        }
         gui.setDice(3, 5);
     }
 
@@ -34,10 +36,38 @@ public class UIController {
     }
 
     public void updatePlayers(Player[] player) {
-        if (uiPlayers == null) {
-
+        for(int i = 0 ; i < player.length ; i++) {
+            uiPlayers[i].setBalance(player[i].money.getAmount());
 
         }
+
+    }
+
+    public void updatePlayerPosition(Player player, int sum) {
+        int currentField = checkPlayerPosition();
+        System.out.println("currentField: "+currentField);
+        int newField;
+        if (currentField + sum > 39) {
+            newField = currentField + sum - fields.length;
+        } else {
+            newField = currentField+sum;
+        }
+        System.out.println("newField: "+newField);
+        removeCar(currentField);
+        fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
+
+
+    }
+
+    public int checkPlayerPosition() {
+        int playerPos;
+        for (GUI_Field field : fields) {
+            if (field.hasCar(uiPlayers[0])) {
+                playerPos = field.getNumber();
+                return playerPos;
+            }
+        }
+        return 0;
     }
 
 
@@ -49,9 +79,16 @@ public class UIController {
     }
 
     //Removes car from its current field and sets the car in a new specified location.
+    public void setCar(int field) {
+
+    }
+
+    /*
+    //Removes car from its current field and sets the car in a new specified location.
     //TODO fix this!
     public void setCar(int field) {
         int fieldnumb = field;
+        //System.out.println("Arraylocation1 "+fieldnumb);
         removeCar();
 
         if (fieldnumb>39) {
@@ -60,23 +97,22 @@ public class UIController {
 
         fields[fieldnumb].setCar(uiPlayers[0], true);
         //DEBUG PRINT
-        System.out.println("Arraylocation "+fieldnumb);
+        System.out.println("Arraylocation2 "+fieldnumb);
     }
+    */
 
     //Remove cars
-    private void removeCar() {
-        for(int i =0; i < fields.length; i++) {
-            fields[i].removeAllCars();
-        }
+    public void removeCar(int fieldnumb) {
+        fields[fieldnumb].setCar(uiPlayers[0], false);
     }
 
+    /*
     //Checks if there is currently a car placed on a field and returns
     //the array number if a car is found.
     //TODO needs fixing.
     public int checkForCar() {
         int arrayNumber = 0;
-
-        for(int i = 0; i<fields.length; i++) {
+        for(int i = 0 ; i < fields.length ; i++) {
             if (fields[i].hasCar(uiPlayers[0])) {
                 arrayNumber = fields[i].getNumber()-1;
             }
@@ -86,6 +122,7 @@ public class UIController {
 
         return arrayNumber;
     }
+    */
 
     public int requestNumberOfPlayers() {
         return gui.getUserInteger("Choose number of players.", 2, 4);
