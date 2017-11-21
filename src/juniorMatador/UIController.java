@@ -10,7 +10,6 @@ public class UIController {
 
     private GUI gui = new GUI();
     private GUI_Field[] fields;
-    //private GUI_Player player1 = new GUI_Player("John Rambo", 1000);
     private GUI_Player[] uiPlayers;
 
     //Method for initial setup.
@@ -19,13 +18,13 @@ public class UIController {
         for (int i = 0 ; i < uiPlayers.length ; i++) {
             fields[0].setCar(uiPlayers[i], true);
         }
+        System.out.println("Done setting players.");
         gui.setDice(3, 5);
     }
 
     public void setupuiPlayers(Player[] player) {
         String playername;
         int playerMoney;
-        System.out.println(player.length);
         uiPlayers = new GUI_Player[player.length];
         for (int i = 0 ; i < uiPlayers.length ; i++) {
             playername = player[i].getName();
@@ -38,12 +37,20 @@ public class UIController {
     public void updatePlayers(Player[] player) {
         for(int i = 0 ; i < player.length ; i++) {
             uiPlayers[i].setBalance(player[i].money.getAmount());
-
         }
 
     }
 
     public void updatePlayerPosition(Player player, int sum) {
+        //test remove later
+        fields[10].setCar(uiPlayers[0], true);
+        System.out.println(fields[10].hasCar(uiPlayers[0]));
+        fields[10].setCar(uiPlayers[0], false);
+        System.out.println(fields[10].hasCar(uiPlayers[0]));
+        fields[10].removeAllCars();
+        System.out.println(fields[10].hasCar(uiPlayers[0]));
+
+
         int currentField = checkPlayerPosition();
         System.out.println("currentField: "+currentField);
         int newField;
@@ -51,26 +58,27 @@ public class UIController {
             newField = currentField + sum - fields.length;
         } else {
             newField = currentField+sum;
+            System.out.println("New field is: "+newField);
         }
-        System.out.println("newField: "+newField);
-        removeCar(currentField);
+        fields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
+        fields[0].removeAllCars();
         fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
+        System.out.println("-------------------------------------------------------------------------");
 
 
     }
 
     public int checkPlayerPosition() {
         int playerPos;
-        for (GUI_Field field : fields) {
-            if (field.hasCar(uiPlayers[0])) {
-                playerPos = field.getNumber();
-                return playerPos;
+        for (int i = 0 ; i < fields.length ; i++) {
+            if (fields[i].hasCar(uiPlayers[0])) {
+                playerPos = fields[i].getNumber()-1;
+                System.out.println("checkPlayerPos method gives: "+playerPos);
+                return i;
             }
         }
         return 0;
     }
-
-
 
     //Creates the button for dicerolls and sets new dice.
     public void rollDice(int value1, int value2) {
@@ -78,12 +86,6 @@ public class UIController {
         gui.setDice(value1, value2);
     }
 
-    //Removes car from its current field and sets the car in a new specified location.
-    public void setCar(int field) {
-
-    }
-
-    /*
     //Removes car from its current field and sets the car in a new specified location.
     //TODO fix this!
     public void setCar(int field) {
@@ -99,14 +101,7 @@ public class UIController {
         //DEBUG PRINT
         System.out.println("Arraylocation2 "+fieldnumb);
     }
-    */
 
-    //Remove cars
-    public void removeCar(int fieldnumb) {
-        fields[fieldnumb].setCar(uiPlayers[0], false);
-    }
-
-    /*
     //Checks if there is currently a car placed on a field and returns
     //the array number if a car is found.
     //TODO needs fixing.
@@ -122,7 +117,12 @@ public class UIController {
 
         return arrayNumber;
     }
-    */
+
+    private void removeCar() {
+        for(int i =0; i<fields.length; i++) {
+            fields[i].removeAllCars();
+        }
+    }
 
     public int requestNumberOfPlayers() {
         return gui.getUserInteger("Choose number of players.", 2, 4);

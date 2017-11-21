@@ -16,7 +16,6 @@ public class Game {
 
     private void setupGame() {
         setupPlayers();
-        System.out.println(player.length);
         uiController.setupuiPlayers(player);
         uiController.setupUI();
     }
@@ -30,7 +29,6 @@ public class Game {
             if (playerName.equals("")) {
                 playerName = "Player"+(i+1);
             }
-            System.out.println(playerName+" "+i);
             player[i] = new Player(playerName, i);
         }
     }
