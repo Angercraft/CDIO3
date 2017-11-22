@@ -74,20 +74,37 @@ public class UIController {
 
     }
 
-    //Creates the button for dicerolls and sets new dice.
+    /**
+     * Creates the button for dice rolls and sets new dice.
+     * @param value1 value for the first dice face.
+     * @param value2 value for the second dice face.
+     */
     public void setUIlDice(int value1, int value2) {
         gui.getUserButtonPressed("", "Roll dice");
         gui.setDice(value1, value2);
     }
 
+    /**
+     * Lets the user input an integer the system can interprit. A pre defined message will be displayed alongside the text field.
+     * @return int
+     */
     public int requestNumberOfPlayers() {
         return gui.getUserInteger("Choose number of players.", 2, 4);
     }
 
+    /**
+     * Lets the user input a String message the system can interpret.
+     * @param message - Message the GUI will display along with the text field.
+     * @return String
+     */
     public String requestStringInput(String message) {
         return gui.getUserString(message);
     }
 
+    /**
+     * Lets user use the GUI, to select one of four GUI_Car types.
+     * @return GUI_Car with defined Type
+     */
     public GUI_Car requestVehicleType() {
         GUI_Car car;
         String vehicle = gui.getUserSelection("What vehicle would you like?", "Car", "Racecar", "Tractor", "UFO");
@@ -106,6 +123,10 @@ public class UIController {
         }
     }
 
+    /**
+     * Lets the user choose one of four colors through the GUI.
+     * @return Color
+     */
     public Color requestVehicleColor() {
         String selection = gui.getUserSelection("What color would you like the vehicle in?", "Blue", "Red", "Green", "Yellow");
         switch (selection) {
