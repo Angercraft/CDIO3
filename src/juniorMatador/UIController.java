@@ -1,5 +1,6 @@
 package juniorMatador;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import gui_fields.GUI_Field;
 import gui_fields.GUI_Car;
 import gui_fields.GUI_Player;
@@ -47,7 +48,8 @@ public class UIController {
     }
     */
 
-    public void updatePlayers(Player[] player) {
+    //TODO Lav det her om. Ikke array, men kun Player player.
+    public void updatePlayerBalance(Player[] player) {
         for(int i = 0 ; i < player.length ; i++) {
             uiPlayers[i].setBalance(player[i].money.getAmount());
         }
