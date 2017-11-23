@@ -1,6 +1,5 @@
 package juniorMatador;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import gui_fields.GUI_Field;
 import gui_fields.GUI_Car;
 import gui_fields.GUI_Player;
@@ -31,6 +30,7 @@ public class UIController {
         }
         uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.money.getAmount(), requestVehicleType());
         gui.addPlayer(uiPlayers[player.getPlayerNumber()]);
+        updatePlayerBalance(player);
         System.out.println("Player added to UI. At: "+player.getPlayerNumber());
     }
 
@@ -48,12 +48,8 @@ public class UIController {
     }
     */
 
-    //TODO Lav det her om. Ikke array, men kun Player player.
-    public void updatePlayerBalance(Player[] player) {
-        for(int i = 0 ; i < player.length ; i++) {
-            uiPlayers[i].setBalance(player[i].money.getAmount());
-        }
-
+    public void updatePlayerBalance(Player player) {
+        uiPlayers[player.getPlayerNumber()].setBalance(player.money.getAmount());
     }
 
     public void updatePlayerPosition(Player player, int sum) {
@@ -70,8 +66,6 @@ public class UIController {
         fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
         player.setPlayerPos(newField);
         System.out.println("-------------------------------------------------------------------------");
-
-
     }
 
     /**
