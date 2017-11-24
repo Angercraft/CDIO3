@@ -12,11 +12,11 @@ public class UIController {
     private GUI_Field[] fields;
     private GUI_Player[] uiPlayers;
 
-    //Method for initial setup.
+    /**
+     * Prepares the GUI board. Adds all GUI_Players to the first field and sets the dice to show them on the GUI.
+     */
     public void setupUI() {
-        System.out.println("Setting up UI. GUI_Player length is: "+uiPlayers.length);
         fields = gui.getFields();
-        System.out.println("Fields length is: "+fields.length);
         for (int i = 0 ; i < uiPlayers.length ; i++) {
             fields[0].setCar(uiPlayers[i], true);
         }
@@ -24,6 +24,11 @@ public class UIController {
         gui.setDice(3, 5);
     }
 
+    /**
+     * Creates a GUI_Player objects, which is a visual on the GUI, from an object of type Player.
+     * @param player an object of type Player. Will be added as GUI_Player.
+     * @param amountOfPlayers the number of players, which is the size of the array. Only used if the array is not initialized.
+     */
     public void addUIPlayer(Player player, int amountOfPlayers) {
         if (uiPlayers == null) {
             uiPlayers = new GUI_Player[amountOfPlayers];
@@ -34,24 +39,19 @@ public class UIController {
         System.out.println("Player added to UI. At: "+player.getPlayerNumber());
     }
 
-    /*
-    public void setupUIPlayers(Player[] player) {
-        String playername;
-        int playerMoney;
-        uiPlayers = new GUI_Player[player.length];
-        for (int i = 0 ; i < uiPlayers.length ; i++) {
-            playername = player[i].getName();
-            playerMoney = player[i].money.getAmount();
-            uiPlayers[i] = new GUI_Player(playername, playerMoney, requestVehicleType());
-            gui.addPlayer(uiPlayers[i]);
-        }
-    }
-    */
-
+    /**
+     * Changes the visual balance for the player on the GUI.
+     * @param player an object of type Player.
+     */
     public void updatePlayerBalance(Player player) {
         uiPlayers[player.getPlayerNumber()].setBalance(player.money.getAmount());
     }
 
+    /**
+     * Changes the players vehicle position on the GUI.
+     * @param player an object of the type Player.
+     * @param sum the number of fields the player moves forward on the board.
+     */
     public void updatePlayerPosition(Player player, int sum) {
         int currentField = player.getPlayerPos();
         System.out.println("currentField: "+currentField);
@@ -73,7 +73,7 @@ public class UIController {
      * @param value1 value for the first dice face.
      * @param value2 value for the second dice face.
      */
-    public void setUIlDice(int value1, int value2) {
+    public void setUIDice(int value1, int value2) {
         gui.getUserButtonPressed("", "Roll dice");
         gui.setDice(value1, value2);
     }

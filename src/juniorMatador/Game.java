@@ -1,7 +1,5 @@
 package juniorMatador;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.util.Random;
 
 public class Game {
@@ -9,21 +7,30 @@ public class Game {
     Player[] player;
     Dies dies = new Dies();
 
+    /**
+     * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
+     */
     public void playGame() {
         Player activePlayer;
         setupGame();
         activePlayer = startPlayer();
-        while (true) {
+        loop: while (true) {
             rollDice(activePlayer);
             activePlayer = changePlayer();
         }
     }
 
+    /**
+     * Runs the setupPlayers method and setupUI from the UIController object.
+     */
     private void setupGame() {
         setupPlayers();
         uiController.setupUI();
     }
 
+    /**
+     * Creates an object of the type Player and adds it to an array of Player objects.
+     */
     private void setupPlayers() {
         String playerName;
         int number = uiController.requestNumberOfPlayers();
@@ -39,12 +46,20 @@ public class Game {
         System.out.println("SetupPlayers completed.");
     }
 
+    /**
+     * Rolls the dice from the object dies. Runs setUIDice with the two face values from object dies, and updates the player position on the GUI, with the sum of the face values.
+     * @param player an object of the type Player. The player which you want to play for.
+     */
     private void rollDice(Player player) {
         dies.roll();
-        uiController.setUIlDice(dies.getFace1(), dies.getFace2());
+        uiController.setUIDice(dies.getFace1(), dies.getFace2());
         uiController.updatePlayerPosition(player, dies.sum());
     }
 
+    /**
+     * Determines at random which player will go first.
+     * @return Returns an object of Player for which player is the first to move.
+     */
     public Player startPlayer() {
         Random rand = new Random();
         int numOfPlayers = player.length;
@@ -54,6 +69,10 @@ public class Game {
         return player[startPlayer];
     }
 
+    /**
+     * Changes the active players playerTurn to false, and selects the next player in line to be the active player.
+     * @return the next Player in the array of Player objects.
+     */
     public Player changePlayer() {
         for (int i = 0 ; i < player.length ; i++) {
             if (player[i].getPlayerTurn()) {
