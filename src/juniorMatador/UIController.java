@@ -2,23 +2,27 @@ package juniorMatador;
 
 import gui_fields.GUI_Field;
 import gui_fields.GUI_Car;
-import gui_fields.GUI_Player;
+import gui_fields.*;
 import gui_main.GUI;
 import java.awt.Color;
 
 public class UIController {
 
-    private GUI gui = new GUI();
-    private GUI_Field[] fields;
+    private GUI_Field[] uifields;
+    private GUI gui;
     private GUI_Player[] uiPlayers;
+
+    UIController() {
+        uifields = fields();
+        gui = new GUI(uifields);
+    }
 
     /**
      * Prepares the GUI board. Adds all GUI_Players to the first field and sets the dice to show them on the GUI.
      */
     public void setupUI() {
-        fields = gui.getFields();
-        for (int i = 0 ; i < uiPlayers.length ; i++) {
-            fields[0].setCar(uiPlayers[i], true);
+        for (GUI_Player uiPlayer : uiPlayers) {
+            uifields[0].setCar(uiPlayer, true);
         }
         System.out.println("Done setting players.");
         gui.setDice(3, 5);
@@ -57,13 +61,13 @@ public class UIController {
         System.out.println("currentField: "+currentField);
         int newField;
         if (currentField + sum > 39) {
-            newField = currentField + sum - fields.length;
+            newField = currentField + sum - uifields.length;
         } else {
             newField = currentField+sum;
             System.out.println("New field is: "+newField);
         }
-        fields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
-        fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
+        uifields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
+        uifields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
         player.setPlayerPos(newField);
         System.out.println("-------------------------------------------------------------------------");
     }
@@ -135,5 +139,41 @@ public class UIController {
             default:
                 return Color.BLUE;
         }
+    }
+
+    public GUI_Field[] fields() {
+        GUI_Field[] fields = new GUI_Field[31];
+        fields[0]= new GUI_Start();
+        fields[1]= new Chance(Color.WHITE, "Chance",1);
+        fields[2]= new PlayerOwnedAttraction(Color.MAGENTA, "Ballonboden",1,2);
+        fields[3]= new PlayerOwnedAttraction(Color.MAGENTA, "Candy Floss",1,3);
+        fields[4]= new Chance(Color.WHITE, "Chance",4);
+        fields[5]= new XtraTurnField(Color.YELLOW, "Tog",5);
+        fields[6]= new PlayerOwnedAttraction(Color.BLUE, "Dukkeforestillingen",2,6);
+        fields[7]= new PlayerOwnedAttraction(Color.BLUE,"Trylleshowet",2,7);
+        fields[8]= new Attraction(Color.WHITE, "Betal 2kr for at se Fyrværkeriet",8,2);
+        fields[9]= new Chance(Color.WHITE, "Chance",9);
+        fields[10]= new Field(Color.WHITE, "På besøg i Caféen",10);
+        fields[11]= new PlayerOwnedAttraction(Color.PINK, "Karrusellen",2,11);
+        fields[12]= new PlayerOwnedAttraction(Color.PINK, "Robådene",2,12);
+        fields[13]= new XtraTurnField(Color.GREEN, "Tog",13);
+        fields[14]= new PlayerOwnedAttraction(Color.ORANGE, "Vandrutschebanen",3,14);
+        fields[15]= new PlayerOwnedAttraction(Color.ORANGE, "Minigolf Banen",3,15);
+        fields[16]= new GetMoney(Color.WHITE, "Onkel Mangepenges byttepenge",16);
+        fields[17]= new Chance(Color.WHITE, "Chance",17);
+        fields[18]= new PlayerOwnedAttraction(Color.RED, "Videoarkaden",3,18);
+        fields[19]= new PlayerOwnedAttraction(Color.RED, "Spøgelsestoget",3,19);
+        fields[20]= new Chance(Color.WHITE, "Chance",20);
+        fields[21]= new XtraTurnField(Color.BLUE.brighter(), "Tog",21);
+        fields[22]= new PlayerOwnedAttraction(Color.YELLOW.darker(), "Helikoptertur",4,22);
+        fields[23]= new PlayerOwnedAttraction(Color.YELLOW.darker(),"Ponyridning",4,23);
+        fields[24]= new Attraction(Color.WHITE, "Betal 2kr for at delfinerne",24,2);
+        fields[25]= new Chance(Color.WHITE, "Chance",25);
+        fields[26]= new PlayerOwnedAttraction(Color.GREEN, "Radiobilerne",4,26);
+        fields[27]= new PlayerOwnedAttraction(Color.GREEN, "Pariserhjulet",4,27);
+        fields[28]= new XtraTurnField(Color.RED, "Tog",28);
+        fields[29]= new PlayerOwnedAttraction(Color.BLUE.darker(),"Svingkarusellen",5, 29);
+        fields[30]= new PlayerOwnedAttraction(Color.BLUE.darker(), "Rutschebanene",5,30);
+        return fields;
     }
 }

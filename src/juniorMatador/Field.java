@@ -1,21 +1,15 @@
 package juniorMatador;
 
-public class Field {
-    private String name;
+import gui_fields.GUI_Field;
+import java.awt.*;
+
+public class Field extends GUI_Field {
+
     private int fieldNo;
 
-    public Field(String name, int fieldNo){
-        this.name=name;
-        this.fieldNo=fieldNo;
-    }
-
-
-    public String getName(){
-        return name;
-    }
-
-    public void setName(String name){
-        this.name=name;
+    public Field(Color color, String name, int fieldNo){
+        super(color, color, name, "", "");
+        this.fieldNo = fieldNo;
     }
 
     public int getFieldNo(){

@@ -1,9 +1,11 @@
 package juniorMatador;
 
+import java.awt.*;
+
 public class MoveToCafe extends Field {
 
-    public MoveToCafe(String name, int fieldNo) {
-        super(name,fieldNo);
+    public MoveToCafe(Color color, String name, int fieldNo) {
+        super(color, name,fieldNo);
     }
 
     public void move(Player player){

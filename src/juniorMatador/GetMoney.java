@@ -1,10 +1,14 @@
 package juniorMatador;
 
+import java.awt.*;
+
 public class GetMoney extends Field {
-    public GetMoney(String name,int fieldNo) {
-        super(name,fieldNo);
-    }
+
     private int moneyPrice;
+
+    public GetMoney(Color color, String name, int fieldNo) {
+        super(color, name,fieldNo);
+    }
 
     public void addMoney(int money){
         moneyPrice+=money;

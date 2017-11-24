@@ -3,6 +3,7 @@ package juniorMatador;
 import java.util.Random;
 
 public class Game {
+
     UIController uiController = new UIController();
     Player[] player;
     Dies dies = new Dies();

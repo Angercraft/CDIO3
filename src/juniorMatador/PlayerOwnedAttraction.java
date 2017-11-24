@@ -1,16 +1,16 @@
 package juniorMatador;
 
+import java.awt.*;
+
 public class PlayerOwnedAttraction extends Field {
 
     private Player owner;
-    private String color;
     private int price;
     private int rent;
 
-    public PlayerOwnedAttraction(String name, int price, String color, int fieldNo) {
-        super(name, fieldNo);
+    public PlayerOwnedAttraction(Color color, String name, int price, int fieldNo) {
+        super(color, name, fieldNo);
         this.price=price;
-        this.color=color;
         owner = null;
     }
 
@@ -20,10 +20,6 @@ public class PlayerOwnedAttraction extends Field {
 
     public Player getOwner() {
         return owner;
-    }
-
-    public String getColor(){
-        return color;
     }
 
     public int getPrice(){

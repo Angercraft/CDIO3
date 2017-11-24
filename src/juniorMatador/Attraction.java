@@ -1,16 +1,22 @@
 package juniorMatador;
 
+import java.awt.*;
+
 public class Attraction extends Field {
 
-    public int price;
+    private int price;
 
-    public Attraction(String name, int fieldNo,int price) {
-        super(name, fieldNo);
-        this.price=price;
+    public Attraction(Color color, String name, int fieldNo, int price) {
+        super(color, name, fieldNo);
+        this.price = price;
     }
 
     public int getPrice(){
         return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public void LandOnField(Player land){
