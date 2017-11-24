@@ -6,7 +6,8 @@ public class Game {
 
     UIController uiController = new UIController();
     Player[] player;
-    Dies dies = new Dies();
+    Die die = new Die();
+    FieldEffect fieldEffect = new FieldEffect();
 
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
@@ -17,6 +18,7 @@ public class Game {
         activePlayer = startPlayer();
         loop: while (true) {
             rollDice(activePlayer);
+            fieldEffect.getFieldEffect(activePlayer);
             activePlayer = changePlayer();
         }
     }
@@ -48,13 +50,12 @@ public class Game {
     }
 
     /**
-     * Rolls the dice from the object dies. Runs setUIDice with the two face values from object dies, and updates the player position on the GUI, with the sum of the face values.
+     * Rolls the dice from the object die. Runs setUIDice with the two face values from object die, and updates the player position on the GUI, with the sum of the face values.
      * @param player an object of the type Player. The player which you want to play for.
      */
     private void rollDice(Player player) {
-        dies.roll();
-        uiController.setUIDice(dies.getFace1(), dies.getFace2());
-        uiController.updatePlayerPosition(player, dies.sum());
+        uiController.setUIDie(die.roll());
+        uiController.updatePlayerPosition(player, die.getFace());
     }
 
     /**
