@@ -1,6 +1,5 @@
 package juniorMatador;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import gui_fields.GUI_Field;
 import gui_fields.GUI_Car;
 import gui_fields.GUI_Player;
@@ -13,11 +12,11 @@ public class UIController {
     private GUI_Field[] fields;
     private GUI_Player[] uiPlayers;
 
-    //Method for initial setup.
+    /**
+     * Prepares the GUI board. Adds all GUI_Players to the first field and sets the dice to show them on the GUI.
+     */
     public void setupUI() {
-        System.out.println("Setting up UI. GUI_Player length is: "+uiPlayers.length);
         fields = gui.getFields();
-        System.out.println("Fields length is: "+fields.length);
         for (int i = 0 ; i < uiPlayers.length ; i++) {
             fields[0].setCar(uiPlayers[i], true);
         }
@@ -25,37 +24,34 @@ public class UIController {
         gui.setDice(3, 5);
     }
 
+    /**
+     * Creates a GUI_Player objects, which is a visual on the GUI, from an object of type Player.
+     * @param player an object of type Player. Will be added as GUI_Player.
+     * @param amountOfPlayers the number of players, which is the size of the array. Only used if the array is not initialized.
+     */
     public void addUIPlayer(Player player, int amountOfPlayers) {
         if (uiPlayers == null) {
             uiPlayers = new GUI_Player[amountOfPlayers];
         }
         uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.money.getAmount(), requestVehicleType());
         gui.addPlayer(uiPlayers[player.getPlayerNumber()]);
+        updatePlayerBalance(player);
         System.out.println("Player added to UI. At: "+player.getPlayerNumber());
     }
 
-    /*
-    public void setupUIPlayers(Player[] player) {
-        String playername;
-        int playerMoney;
-        uiPlayers = new GUI_Player[player.length];
-        for (int i = 0 ; i < uiPlayers.length ; i++) {
-            playername = player[i].getName();
-            playerMoney = player[i].money.getAmount();
-            uiPlayers[i] = new GUI_Player(playername, playerMoney, requestVehicleType());
-            gui.addPlayer(uiPlayers[i]);
-        }
-    }
-    */
-
-    //TODO Lav det her om. Ikke array, men kun Player player.
-    public void updatePlayerBalance(Player[] player) {
-        for(int i = 0 ; i < player.length ; i++) {
-            uiPlayers[i].setBalance(player[i].money.getAmount());
-        }
-
+    /**
+     * Changes the visual balance for the player on the GUI.
+     * @param player an object of type Player.
+     */
+    public void updatePlayerBalance(Player player) {
+        uiPlayers[player.getPlayerNumber()].setBalance(player.money.getAmount());
     }
 
+    /**
+     * Changes the players vehicle position on the GUI.
+     * @param player an object of the type Player.
+     * @param sum the number of fields the player moves forward on the board.
+     */
     public void updatePlayerPosition(Player player, int sum) {
         int currentField = player.getPlayerPos();
         System.out.println("currentField: "+currentField);
@@ -70,24 +66,39 @@ public class UIController {
         fields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
         player.setPlayerPos(newField);
         System.out.println("-------------------------------------------------------------------------");
-
-
     }
 
-    //Creates the button for dicerolls and sets new dice.
-    public void setUIlDice(int value1, int value2) {
+    /**
+     * Creates the button for dice rolls and sets new dice.
+     * @param value1 value for the first dice face.
+     * @param value2 value for the second dice face.
+     */
+    public void setUIDice(int value1, int value2) {
         gui.getUserButtonPressed("", "Roll dice");
         gui.setDice(value1, value2);
     }
 
+    /**
+     * Lets the user input an integer the system can interprit. A pre defined message will be displayed alongside the text field.
+     * @return int
+     */
     public int requestNumberOfPlayers() {
         return gui.getUserInteger("Choose number of players.", 2, 4);
     }
 
+    /**
+     * Lets the user input a String message the system can interpret.
+     * @param message - Message the GUI will display along with the text field.
+     * @return String
+     */
     public String requestStringInput(String message) {
         return gui.getUserString(message);
     }
 
+    /**
+     * Lets user use the GUI, to select one of four GUI_Car types.
+     * @return GUI_Car with defined Type
+     */
     public GUI_Car requestVehicleType() {
         GUI_Car car;
         String vehicle = gui.getUserSelection("What vehicle would you like?", "Car", "Racecar", "Tractor", "UFO");
@@ -106,6 +117,10 @@ public class UIController {
         }
     }
 
+    /**
+     * Lets the user choose one of four colors through the GUI.
+     * @return Color
+     */
     public Color requestVehicleColor() {
         String selection = gui.getUserSelection("What color would you like the vehicle in?", "Blue", "Red", "Green", "Yellow");
         switch (selection) {
