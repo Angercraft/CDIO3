@@ -22,9 +22,9 @@ public class Money {
      */
     public void addAmount(int amount){
         if ((this.amount + amount) < 0) {
-            this.amount=0;
+            this.amount = 0;
         } else {
-            this.amount+=amount;
+            this.amount += amount;
         }
     }
 

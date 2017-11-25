@@ -12,8 +12,12 @@ public class Buildings {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void addAmount(int amount) {
+        if ((this.amount + amount) < 0) {
+            this.amount = 0;
+        } else {
+            this.amount += amount;
+        }
     }
 
     public void reset() {

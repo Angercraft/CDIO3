@@ -28,7 +28,10 @@ public class LogicStreet extends LogicField {
     }
 
     public int getRent() {
-        return value*buildings;
+        if (buildings > 0) {
+            return value * buildings;
+        }
+        return value;
     }
 
     public void setBuildings(int buildings) {

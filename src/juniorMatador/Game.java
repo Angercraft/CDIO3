@@ -19,8 +19,33 @@ public class Game {
         loop: while (true) {
             rollDice(activePlayer);
             updatePlayer(activePlayer);
+            if (checkWinner()) {
+                break loop;
+            }
             activePlayer = changePlayer();
         }
+    }
+
+    private boolean checkWinner() {
+        for (Player player: player) {
+            if (player.money.getAmount() == 0) {
+                Player winner = getWinner();
+                uiController.writeMessage(player.getName()+" is broke. The winner is "+winner.getName()+" with "+winner.money.getAmount()+" kr.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Player getWinner() {
+        int highest = 1;
+        Player winner = player[0];
+        for (Player player : player) {
+            if (player.money.getAmount() > highest) {
+                winner = player;
+            }
+        }
+        return winner;
     }
 
     /**
@@ -55,6 +80,9 @@ public class Game {
      */
     private void rollDice(Player player) {
         uiController.setUIDie(die.roll());
+        if (startPassed(player, die.getFace())) {
+            player.money.addAmount(3);
+        }
         uiController.updatePlayerPosition(player, die.getFace());
     }
 
@@ -76,10 +104,18 @@ public class Game {
                 parkingFieldEffect(player, (LogicParking) field);
                 break;
         }
+        uiController.updatePlayerBalance(player);
+    }
 
+    private boolean startPassed(Player player, int value) {
+        if (player.getPlayerPos() + value > uiController.fields().length-1) {
+            return true;
+        }
+        return false;
     }
 
     private void parkingFieldEffect(Player player, LogicParking field) {
+        uiController.writeMessage("You got free parking and found some money. You recieve "+field.getValue()+" kr.");
         player.money.addAmount(field.getValue());
         field.addValue(-field.getValue());
     }
@@ -93,24 +129,34 @@ public class Game {
         player.setPlayerPos(field.getJailLocation());
         player.money.addAmount(-field.getTicket());
         ((LogicParking)fields.getField(12)).addValue(field.getTicket());
-        uiController.updatePlayerBalance(player);
     }
 
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null) {
-            if (uiController.requestPlayerChoice("Would you like to buy this property?").equals("Yes")) {
+            if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
                 player.money.addAmount(-field.getRent());
                 field.setOwner(player);
             }
-        } else if (field.getOwner() == player) {
+        } else if (field.getOwner() == player && field.getBuildings() < 3) {
             if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy some for 2 kr. a piece?", "No", "Yes").equals("Yes")) {
-                int choice = Integer.parseInt(uiController.requestPlayerChoice("How many would you like to have on the field?", "1", "2", "3"));
-                field.setBuildings(choice);
+                if (player.buildings.getAmount() > 0) {
+                    int choice = Integer.parseInt(uiController.requestPlayerChoice("How many would you like to have on the field?", "1", "2", "3"));
+                    if (choice > player.buildings.getAmount()) {
+                        uiController.writeMessage("You can't buy that many, you only have "+player.buildings.getAmount()+" left. You will get those instead.");
+                        choice = player.buildings.getAmount();
+                    }
+                    field.setBuildings(choice);
+                    player.money.addAmount(-(choice*2));
+                    player.buildings.addAmount(-choice);
+                } else {
+                    uiController.writeMessage("You have "+player.buildings.getAmount()+" buildings and can't build.");
+                }
             }
         } else {
             uiController.writeMessage(field.getOwner().getName()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
             player.money.addAmount(-field.getRent());
             field.getOwner().money.addAmount(field.getRent());
+            uiController.updatePlayerBalance(field.getOwner());
         }
     }
 

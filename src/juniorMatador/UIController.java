@@ -60,18 +60,15 @@ public class UIController {
      */
     public void updatePlayerPosition(Player player, int value) {
         int currentField = player.getPlayerPos();
-        System.out.println("currentField: "+currentField);
         int newField;
         if (currentField + value > uiFields.length-1) {
             newField = currentField + value - uiFields.length;
         } else {
             newField = currentField+value;
-            System.out.println("New field is: "+newField);
         }
         uiFields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
         uiFields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
         player.setPlayerPos(newField);
-        System.out.println("-------------------------------------------------------------------------");
     }
 
     /**
