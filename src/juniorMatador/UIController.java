@@ -100,25 +100,32 @@ public class UIController {
         return gui.getUserString(message);
     }
 
+    public String playerCanBuy() {
+        return gui.getUserSelection("Would you like to buy this property?", "Yes", "No");
+    }
+
+    public void writeMessage(String message) {
+        gui.showMessage(message);
+    }
+
     /**
      * Lets user use the GUI, to select one of four GUI_Car types.
      * @return GUI_Car with defined Type
      */
     public GUI_Car requestVehicleType() {
-        GUI_Car car;
         String vehicle = gui.getUserSelection("What vehicle would you like?", "Car", "Racecar", "Tractor", "UFO");
         Color color = requestVehicleColor();
         switch (vehicle) {
             case "car":
-                return car = new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
+                return new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
             case "Racecar":
-                return car = new GUI_Car(color, color, GUI_Car.Type.RACECAR, GUI_Car.Pattern.FILL);
+                return new GUI_Car(color, color, GUI_Car.Type.RACECAR, GUI_Car.Pattern.FILL);
             case "Tractor":
-                return car = new GUI_Car(color, color, GUI_Car.Type.TRACTOR, GUI_Car.Pattern.FILL);
+                return new GUI_Car(color, color, GUI_Car.Type.TRACTOR, GUI_Car.Pattern.FILL);
             case "UFO":
-                return car = new GUI_Car(color, color, GUI_Car.Type.UFO, GUI_Car.Pattern.FILL);
+                return new GUI_Car(color, color, GUI_Car.Type.UFO, GUI_Car.Pattern.FILL);
             default:
-                return car = new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
+                return new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
         }
     }
 
@@ -142,10 +149,6 @@ public class UIController {
         }
     }
 
-    public GUI_Field getUiFields(int number) {
-        return uiFields[number];
-    }
-
     public GUI_Field[] fields() {
         GUI_Field[] fields = new GUI_Field[24];
         fields[0] = new GUI_Start("Start", "", "Every time you pass Start, you recieve 2 kr.", Color.GREEN, Color.BLACK);
@@ -154,7 +157,7 @@ public class UIController {
         fields[3] = new GUI_Chance("?", "", "Træk et chancekort og følg dets anvisninger.", Color.WHITE, Color.BLACK);
         fields[4] = new GUI_Street("Slikbutikken", "", "Til den lille slikmund.", "1", Color.BLUE.brighter(), Color.BLACK);
         fields[5] = new GUI_Street("Iskiosken", "", "Hjælper når solen er fremme.", "1", Color.BLUE.brighter(), Color.BLACK);
-        fields[6] = new GUI_Jail(); fields[6].setSubText("Gratis parkering");
+        fields[6] = new GUI_Jail(); fields[6].setSubText("");
         fields[7] = new GUI_Street("Museet", "", "Både sjovt og lærerigt.", "2", Color.PINK, Color.BLACK);
         fields[8] = new GUI_Street("Biblioteket", "", "Lærerigt, men ikke så sjovt som museet.", "2", Color.PINK, Color.BLACK);
         fields[9] = new GUI_Chance("?", "", "Træk et chancekort og følg dets anvisninger.", Color.WHITE, Color.BLACK);

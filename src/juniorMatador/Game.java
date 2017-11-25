@@ -7,7 +7,7 @@ public class Game {
     UIController uiController = new UIController();
     Player[] player;
     Die die = new Die();
-    FieldEffect fieldEffect = new FieldEffect();
+    FieldController fields = new FieldController();
 
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
@@ -18,7 +18,7 @@ public class Game {
         activePlayer = startPlayer();
         loop: while (true) {
             rollDice(activePlayer);
-            fieldEffect.getFieldEffect(activePlayer);
+            updatePlayer(activePlayer);
             activePlayer = changePlayer();
         }
     }
@@ -56,6 +56,38 @@ public class Game {
     private void rollDice(Player player) {
         uiController.setUIDie(die.roll());
         uiController.updatePlayerPosition(player, die.getFace());
+    }
+
+    public void updatePlayer(Player player) {
+        LogicField field;
+        field = fields.getField(player.getPlayerPos());
+        String type = field.getType();
+        switch (type) {
+            case "STREET":
+                streetFieldEffect(player, (LogicStreet) field);
+            case "GOTOJAIL":
+                goToJailFieldEffect(player, (LogicGoToJail) field);
+
+        }
+
+    }
+
+    private void goToJailFieldEffect(Player player, LogicGoToJail field) {
+        player.setPlayerPos(field.getJailLocation());
+        player.money.addAmount(-3);
+        fields.getField()
+    }
+
+    public void streetFieldEffect(Player player, LogicStreet field) {
+        if (field.getOwner() == null) {
+            if (uiController.playerCanBuy().equals("Yes")) {
+                field.setOwner(player);
+            }
+        } else {
+            uiController.writeMessage(field.getOwner()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
+            player.money.addAmount(-field.getRent());
+            field.getOwner().money.addAmount(field.getRent());
+        }
     }
 
     /**
