@@ -7,6 +7,7 @@ public class Player {
     private int playerPos = 0;
     Money money;
     Buildings buildings;
+    private boolean isPrisoned = false;
 
     Player(String name, int playerNumber) {
         this.name = name;
@@ -14,7 +15,13 @@ public class Player {
         money = new Money();
         buildings = new Buildings();
     }
+    public boolean getPrisoned() {
+        return isPrisoned;
+    }
 
+    public void setPrisoned(boolean prisoned) {
+        isPrisoned = prisoned;
+    }
     public void setName(String name) {
         this.name = name;
     }
