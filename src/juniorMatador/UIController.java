@@ -83,6 +83,12 @@ public class UIController {
         gui.setDie(value);
     }
 
+    public void jailPlayer(Player player, int jail) {
+        int current = player.getPlayerPos();
+        uiFields[current].setCar(uiPlayers[player.getPlayerNumber()],false);
+        uiFields[jail].setCar(uiPlayers[player.getPlayerNumber()],true);
+    }
+
     /**
      * Lets the user input an integer the system can interprit. A pre defined message will be displayed alongside the text field.
      * @return int
@@ -100,8 +106,8 @@ public class UIController {
         return gui.getUserString(message);
     }
 
-    public String playerCanBuy() {
-        return gui.getUserSelection("Would you like to buy this property?", "Yes", "No");
+    public String requestPlayerChoice(String message, String... options) {
+        return gui.getUserSelection(message, options);
     }
 
     public void writeMessage(String message) {

@@ -65,26 +65,50 @@ public class Game {
         switch (type) {
             case "STREET":
                 streetFieldEffect(player, (LogicStreet) field);
+                break;
             case "GOTOJAIL":
                 goToJailFieldEffect(player, (LogicGoToJail) field);
-
+                break;
+            case "CHANCE":
+                chanceFieldEffect(player, (LogicChance) field);
+                break;
+            case "PARKING":
+                parkingFieldEffect(player, (LogicParking) field);
+                break;
         }
 
     }
 
+    private void parkingFieldEffect(Player player, LogicParking field) {
+        player.money.addAmount(field.getValue());
+        field.addValue(-field.getValue());
+    }
+
+    private void chanceFieldEffect(Player player, LogicChance field) {
+    }
+
     private void goToJailFieldEffect(Player player, LogicGoToJail field) {
+        uiController.writeMessage("You go to jail and pays a ticket of 3 kr.");
+        uiController.jailPlayer(player, field.getJailLocation());
         player.setPlayerPos(field.getJailLocation());
-        player.money.addAmount(-3);
-        fields.getField()
+        player.money.addAmount(-field.getTicket());
+        ((LogicParking)fields.getField(12)).addValue(field.getTicket());
+        uiController.updatePlayerBalance(player);
     }
 
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null) {
-            if (uiController.playerCanBuy().equals("Yes")) {
+            if (uiController.requestPlayerChoice("Would you like to buy this property?").equals("Yes")) {
+                player.money.addAmount(-field.getRent());
                 field.setOwner(player);
             }
+        } else if (field.getOwner() == player) {
+            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy some for 2 kr. a piece?", "No", "Yes").equals("Yes")) {
+                int choice = Integer.parseInt(uiController.requestPlayerChoice("How many would you like to have on the field?", "1", "2", "3"));
+                field.setBuildings(choice);
+            }
         } else {
-            uiController.writeMessage(field.getOwner()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
+            uiController.writeMessage(field.getOwner().getName()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
             player.money.addAmount(-field.getRent());
             field.getOwner().money.addAmount(field.getRent());
         }

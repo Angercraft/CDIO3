@@ -8,7 +8,7 @@ public class LogicParking extends LogicField {
         super(fieldNo, "PARKING");
     }
 
-    public void setValue(int value) {
+    public void addValue(int value) {
         if ((this.value + value) < 0) {
             this.value = 0;
         } else {
