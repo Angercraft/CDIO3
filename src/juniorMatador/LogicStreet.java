@@ -34,6 +34,10 @@ public class LogicStreet extends LogicField {
         return value;
     }
 
+    public void addBuilding() {
+        buildings++;
+    }
+
     public void setBuildings(int buildings) {
         if (buildings > 0 && buildings < 4) {
             this.buildings = buildings;

@@ -138,16 +138,11 @@ public class Game {
                 field.setOwner(player);
             }
         } else if (field.getOwner() == player && field.getBuildings() < 3) {
-            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy some for 2 kr. a piece?", "No", "Yes").equals("Yes")) {
+            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy one for 2 kr?", "No", "Yes").equals("Yes")) {
                 if (player.buildings.getAmount() > 0) {
-                    int choice = Integer.parseInt(uiController.requestPlayerChoice("How many would you like to have on the field?", "1", "2", "3"));
-                    if (choice > player.buildings.getAmount()) {
-                        uiController.writeMessage("You can't buy that many, you only have "+player.buildings.getAmount()+" left. You will get those instead.");
-                        choice = player.buildings.getAmount();
-                    }
-                    field.setBuildings(choice);
-                    player.money.addAmount(-(choice*2));
-                    player.buildings.addAmount(-choice);
+                    field.addBuilding();
+                    player.money.addAmount(-2);
+                    player.buildings.addAmount(-2);
                 } else {
                     uiController.writeMessage("You have "+player.buildings.getAmount()+" buildings and can't build.");
                 }
