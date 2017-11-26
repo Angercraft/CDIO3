@@ -3,9 +3,11 @@ package juniorMatador;
 public class Money {
 
     private int amount;
+    private int startAmount;
 
-    Money() {
-        this.amount = 31;
+    Money(int amount) {
+        this.amount = amount;
+        this.startAmount = amount;
     }
 
     public int getAmount() {
@@ -32,6 +34,6 @@ public class Money {
      * Used when starting a new game.
      */
     public void resetMoney() {
-        this.amount = 31;
+        this.amount = startAmount;
     }
 }
