@@ -1,5 +1,6 @@
 package juniorMatador;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Game {
@@ -44,14 +45,31 @@ public class Game {
     }
 
     public Player getWinner() {
-        int highest = 1;
-        Player winner = player[0];
-        for (Player aPlayer : player) {
-            if (aPlayer.getMoney().getAmount() > highest) {
-                winner = aPlayer;
+        Player[] sortByWinner = new Player[player.length];
+        int[] scores = new int[player.length];
+        for (int i = 0 ; i < scores.length ; i++) {
+            scores[i] = player[i].getMoney().getAmount();
+        }
+        Arrays.sort(scores);
+        for (int i = 0 ; i < scores.length ; i++) {
+            for (int j = 0 ; j < player.length ; j++) {
+                if (player[j].getMoney().getAmount() == scores[i]) {
+                    sortByWinner[i] = player[j];
+                }
             }
         }
-        return winner;
+        if (scores[0] == scores[1]) {
+            Random rand = new Random();
+            if (scores.length > 2) {
+                if (scores[1] == scores[2]) {
+                    uiController.writeMessage("3 winners found. Picking winner by random.");
+                    return sortByWinner[rand.nextInt(3)+1];
+                }
+            }
+            uiController.writeMessage("Both "+sortByWinner[0].getName()+" and "+sortByWinner[1].getName()+" has the same score. Picking one of them by random.");
+            return sortByWinner[rand.nextInt(2)+1];
+        }
+        return sortByWinner[0];
     }
 
     public void newGame() {
@@ -145,9 +163,11 @@ public class Game {
     }
 
     public void parkingFieldEffect(Player player, LogicParking field) {
-        uiController.writeMessage("You got free parking and found some money. You recieve "+field.getValue()+" kr.");
-        player.getMoney().addAmount(field.getValue());
-        field.addValue(-field.getValue());
+        if (field.getValue() > 0) {
+            uiController.writeMessage("You got free parking and found some money. You recieve "+field.getValue()+" kr.");
+            player.getMoney().addAmount(field.getValue());
+            field.addValue(-field.getValue());
+        }
     }
 
     public void chanceFieldEffect(Player player, LogicChance field) {
