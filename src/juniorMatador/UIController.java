@@ -39,7 +39,7 @@ public class UIController {
         if (uiPlayers == null) {
             uiPlayers = new GUI_Player[amountOfPlayers];
         }
-        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.money.getAmount(), requestVehicleType());
+        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.getMoney().getAmount(), requestVehicleType());
         gui.addPlayer(uiPlayers[player.getPlayerNumber()]);
         updatePlayerBalance(player);
         System.out.println("Player added to UI. At: "+player.getPlayerNumber());
@@ -50,25 +50,31 @@ public class UIController {
      * @param player an object of type Player.
      */
     public void updatePlayerBalance(Player player) {
-        uiPlayers[player.getPlayerNumber()].setBalance(player.money.getAmount());
+        uiPlayers[player.getPlayerNumber()].setBalance(player.getMoney().getAmount());
     }
 
     /**
-     * Changes the players vehicle position on the GUI.
-     * @param player an object of the type Player.
-     * @param value the number of fields the player moves forward on the board.
+     * Removes the car from the players old field, and sets it to the players new field.
+     * @param playerNum the player number of the player you want moved.
+     * @param newPlayerPos the position to set the player to.
+     * @param oldPlayerPos the position to remove the player from.
      */
-    public void updatePlayerPosition(Player player, int value) {
-        int currentField = player.getPlayerPos();
-        int newField;
-        if (currentField + value > uiFields.length-1) {
-            newField = currentField + value - uiFields.length;
-        } else {
-            newField = currentField+value;
+    public void setPlayerPos(int playerNum, int newPlayerPos, int oldPlayerPos) {
+        uiFields[oldPlayerPos].setCar(uiPlayers[playerNum], false);
+        uiFields[newPlayerPos].setCar(uiPlayers[playerNum], true);
+    }
+
+    /**
+     * Used when starting new game. Will reset all players position to start and set all their money to the start money.
+     */
+    public void resetUIPlayers(int startBalance) {
+        for (GUI_Field field : uiFields) {
+            field.removeAllCars();
         }
-        uiFields[currentField].setCar(uiPlayers[player.getPlayerNumber()], false);
-        uiFields[newField].setCar(uiPlayers[player.getPlayerNumber()], true);
-        player.setPlayerPos(newField);
+        for (GUI_Player player : uiPlayers) {
+            uiFields[0].setCar(player, true);
+            player.setBalance(startBalance);
+        }
     }
 
     /**
@@ -84,6 +90,14 @@ public class UIController {
         int current = player.getPlayerPos();
         uiFields[current].setCar(uiPlayers[player.getPlayerNumber()],false);
         uiFields[jail].setCar(uiPlayers[player.getPlayerNumber()],true);
+    }
+
+    /**
+     * Displays a message in the middle of the board, with black text on white background.
+     * @param message the message you would like displayed on the card.
+     */
+    public void displayChanceCard(String message) {
+        gui.displayChanceCard(message);
     }
 
     /**
@@ -152,6 +166,17 @@ public class UIController {
         }
     }
 
+    /**
+     * Closes the GUI and exits the program.
+     */
+    public void closeUI() {
+        System.exit(0);
+    }
+
+    /**
+     * Creates all the fields on the board from hard coded information.
+     * @return Returns an array of GUI_Field objects, size 24.
+     */
     public GUI_Field[] fields() {
         GUI_Field[] fields = new GUI_Field[24];
         fields[0] = new GUI_Start("Start", "", "Every time you pass Start, you recieve 2 kr.", Color.GREEN, Color.BLACK);

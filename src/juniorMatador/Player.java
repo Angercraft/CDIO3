@@ -5,33 +5,33 @@ public class Player {
     private boolean playerTurn = false;
     private int playerNumber;
     private int playerPos = 0;
-    Money money;
-    Buildings buildings;
-    private boolean isPrisoned = false;
+    private Money money;
+    private Buildings buildings;
 
-    Player(String name, int playerNumber) {
+    Player(String name, int playerNumber, int moneyAmount, int buildingsAmount) {
         this.name = name;
         this.playerNumber = playerNumber;
-        money = new Money();
-        buildings = new Buildings();
-    }
-    public boolean getPrisoned() {
-        return isPrisoned;
-    }
-
-    public void setPrisoned(boolean prisoned) {
-        isPrisoned = prisoned;
-    }
-    public void setName(String name) {
-        this.name = name;
+        money = new Money(moneyAmount);
+        buildings = new Buildings(buildingsAmount);
     }
 
     public String getName() {
         return this.name;
     }
 
-    public void setPlayerNumber(int playerNumber) {
-        this.playerNumber = playerNumber;
+    public void reset() {
+        money.resetMoney();
+        buildings.reset();
+        playerPos = 0;
+        playerTurn = false;
+    }
+
+    public Money getMoney() {
+        return money;
+    }
+
+    public Buildings getBuildings() {
+        return buildings;
     }
 
     public int getPlayerNumber() {

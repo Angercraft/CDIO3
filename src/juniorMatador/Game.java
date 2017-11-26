@@ -4,10 +4,10 @@ import java.util.Random;
 
 public class Game {
 
-    UIController uiController = new UIController();
-    Player[] player;
-    Die die = new Die();
-    FieldController fields = new FieldController();
+    private UIController uiController = new UIController();
+    private Player[] player;
+    private Die die = new Die();
+    private FieldController fields = new FieldController();
 
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
@@ -16,42 +16,67 @@ public class Game {
         Player activePlayer;
         setupGame();
         activePlayer = startPlayer();
-        loop: while (true) {
+        while (true) {
             rollDice(activePlayer);
             updatePlayer(activePlayer);
             if (checkWinner()) {
-                break loop;
+                if (!checkNewGame()) {
+                    break;
+                }
+                newGame();
+                activePlayer = startPlayer();
+                uiController.writeMessage("First player is " + activePlayer.getName());
             }
             activePlayer = changePlayer();
         }
+        uiController.closeUI();
     }
 
-    private boolean checkWinner() {
+    public boolean checkWinner() {
         for (Player player: player) {
-            if (player.money.getAmount() == 0) {
+            if (player.getMoney().getAmount() == 0) {
                 Player winner = getWinner();
-                uiController.writeMessage(player.getName()+" is broke. The winner is "+winner.getName()+" with "+winner.money.getAmount()+" kr.");
+                uiController.writeMessage(player.getName()+" is broke. The winner is "+winner.getName()+" with "+winner.getMoney().getAmount()+" kr.");
                 return true;
             }
         }
         return false;
     }
 
-    private Player getWinner() {
+    public Player getWinner() {
         int highest = 1;
         Player winner = player[0];
-        for (Player player : player) {
-            if (player.money.getAmount() > highest) {
-                winner = player;
+        for (Player aPlayer : player) {
+            if (aPlayer.getMoney().getAmount() > highest) {
+                winner = aPlayer;
             }
         }
         return winner;
     }
 
+    public void newGame() {
+        for (Player aPlayer : player) {
+            aPlayer.reset();
+            uiController.resetUIPlayers(aPlayer.getMoney().getAmount());
+        }
+    }
+
+    public boolean checkNewGame() {
+        String choice = uiController.requestPlayerChoice("Would you like to play again?", "No", "Yes");
+        switch (choice) {
+            case "Yes":
+                return true;
+            case "No":
+                return false;
+            default:
+                return false;
+        }
+    }
+
     /**
      * Runs the setupPlayers method and setupUI from the UIController object.
      */
-    private void setupGame() {
+    public void setupGame() {
         setupPlayers();
         uiController.setupUI();
     }
@@ -59,7 +84,7 @@ public class Game {
     /**
      * Creates an object of the type Player and adds it to an array of Player objects.
      */
-    private void setupPlayers() {
+    public void setupPlayers() {
         String playerName;
         int number = uiController.requestNumberOfPlayers();
         player = new Player[number];
@@ -68,7 +93,7 @@ public class Game {
             if (playerName.equals("")) {
                 playerName = "Player"+(i+1);
             }
-            player[i] = new Player(playerName, i);
+            player[i] = new Player(playerName, i, 31, 10);
             uiController.addUIPlayer(player[i], number);
         }
         System.out.println("SetupPlayers completed.");
@@ -78,15 +103,15 @@ public class Game {
      * Rolls the dice from the object die. Runs setUIDice with the two face values from object die, and updates the player position on the GUI, with the sum of the face values.
      * @param player an object of the type Player. The player which you want to play for.
      */
-    private void rollDice(Player player) {
+    public void rollDice(Player player) {
         uiController.setUIDie(die.roll());
-        if (startPassed(player, die.getFace())) {
-            player.money.addAmount(3);
-        }
-        uiController.updatePlayerPosition(player, die.getFace());
+        updatePlayerPos(player, die.getFace());
     }
 
     public void updatePlayer(Player player) {
+        if (startPassed(player, die.getFace())) {
+            player.getMoney().addAmount(3);
+        }
         LogicField field;
         field = fields.getField(player.getPlayerPos());
         String type = field.getType();
@@ -107,50 +132,55 @@ public class Game {
         uiController.updatePlayerBalance(player);
     }
 
-    private boolean startPassed(Player player, int value) {
-        if (player.getPlayerPos() + value > uiController.fields().length-1) {
-            return true;
-        }
-        return false;
+    public void updatePlayerPos(Player player, int sum) {
+        int oldPos = player.getPlayerPos();
+        int newPos = player.getPlayerPos() + sum;
+        if (newPos > uiController.fields().length-1) newPos -= uiController.fields().length;
+        player.setPlayerPos(newPos);
+        uiController.setPlayerPos(player.getPlayerNumber(), newPos, oldPos);
     }
 
-    private void parkingFieldEffect(Player player, LogicParking field) {
+    public boolean startPassed(Player player, int value) {
+        return player.getPlayerPos() + value > uiController.fields().length - 1;
+    }
+
+    public void parkingFieldEffect(Player player, LogicParking field) {
         uiController.writeMessage("You got free parking and found some money. You recieve "+field.getValue()+" kr.");
-        player.money.addAmount(field.getValue());
+        player.getMoney().addAmount(field.getValue());
         field.addValue(-field.getValue());
     }
 
-    private void chanceFieldEffect(Player player, LogicChance field) {
+    public void chanceFieldEffect(Player player, LogicChance field) {
     }
 
-    private void goToJailFieldEffect(Player player, LogicGoToJail field) {
+    public void goToJailFieldEffect(Player player, LogicGoToJail field) {
         uiController.writeMessage("You go to jail and pays a ticket of 3 kr.");
         uiController.jailPlayer(player, field.getJailLocation());
         player.setPlayerPos(field.getJailLocation());
-        player.money.addAmount(-field.getTicket());
+        player.getMoney().addAmount(-field.getTicket());
         ((LogicParking)fields.getField(12)).addValue(field.getTicket());
     }
 
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null) {
             if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
-                player.money.addAmount(-field.getRent());
+                player.getMoney().addAmount(-field.getRent());
                 field.setOwner(player);
             }
         } else if (field.getOwner() == player && field.getBuildings() < 3) {
             if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy one for 2 kr?", "No", "Yes").equals("Yes")) {
-                if (player.buildings.getAmount() > 0) {
+                if (player.getBuildings().getAmount() > 0) {
                     field.addBuilding();
-                    player.money.addAmount(-2);
-                    player.buildings.addAmount(-2);
+                    player.getMoney().addAmount(-2);
+                    player.getBuildings().addAmount(-2);
                 } else {
-                    uiController.writeMessage("You have "+player.buildings.getAmount()+" buildings and can't build.");
+                    uiController.writeMessage("You have "+player.getBuildings().getAmount()+" buildings and can't build.");
                 }
             }
         } else {
             uiController.writeMessage(field.getOwner().getName()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
-            player.money.addAmount(-field.getRent());
-            field.getOwner().money.addAmount(field.getRent());
+            player.getMoney().addAmount(-field.getRent());
+            field.getOwner().getMoney().addAmount(field.getRent());
             uiController.updatePlayerBalance(field.getOwner());
         }
     }
