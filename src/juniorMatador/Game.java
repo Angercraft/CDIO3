@@ -8,7 +8,7 @@ public class Game {
     private Player[] player;
     private Die die = new Die();
     private FieldController fields = new FieldController();
-
+    private ChanceCards card;
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
      */
@@ -218,4 +218,13 @@ public class Game {
         System.out.println("ERROR: No active player was found.");
         return null;
     }
+    
+    public void cardEffect() {
+    	card.drawCard();
+		if (!card.message.isEmpty()) {
+			uiController.writeMessage(card.message);
+		}
+		if (card.movePiece != null) {}
+	}
+    
 }
