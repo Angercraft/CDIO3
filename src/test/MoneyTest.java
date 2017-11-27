@@ -18,8 +18,12 @@ public class MoneyTest {
     
 	@Test
 	public void testGet() {
-		assertTrue("The required amount isn't equal to the intial amount", 100==testMoney.getAmount());
+		assertTrue("The aquired amount isn't equal to the intial amount", 100==testMoney.getAmount());
 	}
 	
-	
+	@Test
+	public void testSet() {
+		testMoney.setAmount(200);
+		assertTrue("The set amount does not equal expectations", testMoney.getAmount()==200);
+	}
 }
