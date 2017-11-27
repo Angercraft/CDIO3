@@ -1,46 +1,40 @@
 package juniorMatador;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChanceCards {
 	private int movePiece;
 	private int transaction;
-	
-	ChanceCards(int movePiece, int transaction) {
-		this.movePiece = movePiece;
-		this.transaction = transaction;
-		getMovePiece();
-		getTransaction();
-	}
-	
-	static ArrayList<ChanceCards> allChanceCards = new ArrayList<ChanceCards>();
-	
-	
-	private static String deck() {
-		ChanceCards card = new ChanceCards(0, 2);
-		allChanceCards.add(card);
-		
-		card = new ChanceCards(5, 0);
-		allChanceCards.add(card);
-		
-		card = new ChanceCards(5, 0);
-		
-		
-		return allChanceCards.toString();
-	}
-    public static void main(String[] args) {
-    	
-    	System.out.println(deck());
-    }
-	
-	private int getMovePiece() {
-		return movePiece;
-	}
-	
-	private int getTransaction() {
-		return transaction;
-	}
-	
-	
 
+		public ChanceCards (int movePiece, int transaction) {
+			this.movePiece = movePiece;
+			this.transaction = transaction;
+		};
+		
+		
+			/**
+			 * 
+			 * @override 
+			 *
+			public String toString() {
+				String string = ChanceCards.card.movePiece + " " + ChanceCards.card.transaction;
+				return string;	
+			}
+			*/
+		static ArrayList<ChanceCards> deck = new ArrayList<ChanceCards>();
+		public static ArrayList<ChanceCards> fillArray() {
+		deck.add(new ChanceCards(5,6));
+		deck.add(new ChanceCards(2,5));
+		return deck;
+		}
+    public static void main(String[] args) {
+    	fillArray();
+    	deck.get(1);
+    System.out.println(deck.get(1).movePiece);
+    
+    }
+
+   
 }
