@@ -3,8 +3,6 @@ package test;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import juniorMatador.Die;
 import juniorMatador.Player;
 
 public class PlayerTest {
