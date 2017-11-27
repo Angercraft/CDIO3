@@ -41,5 +41,11 @@ public class MoneyTest {
 		assertTrue("The total balance is below 0", testMoney.getAmount()==0);
 	}
 	
-	
+	//Test if resetMoney() sets the balance to the initial starting balance
+	@Test
+	public void testReset() {
+		testMoney.setAmount(324);
+		testMoney.resetMoney();
+		assertTrue("The balance wasn't reset", testMoney.getAmount()==100);
+	}
 }
