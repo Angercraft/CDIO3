@@ -24,6 +24,22 @@ public class MoneyTest {
 	@Test
 	public void testSet() {
 		testMoney.setAmount(200);
-		assertTrue("The set amount does not equal expectations", testMoney.getAmount()==200);
+		assertTrue("The set amount does not meet expectations", testMoney.getAmount()==200);
 	}
+	
+	//Test if addAmount() correctly adds the desired amount to the account if the total balance is above 0.
+	@Test
+	public void testAdd() {
+		testMoney.addAmount(100);
+		assertTrue("The total balance of money does not meet expectations", testMoney.getAmount()==200);
+	}
+	
+	//Test if addAmount() sets the balance to 0 if the total balance is <0.
+	@Test
+	public void testNegAdd() {
+		testMoney.addAmount(-200);
+		assertTrue("The total balance is below 0", testMoney.getAmount()==0);
+	}
+	
+	
 }
