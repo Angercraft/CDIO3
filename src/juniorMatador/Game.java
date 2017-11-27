@@ -111,7 +111,7 @@ public class Game {
             if (playerName.equals("")) {
                 playerName = "Player"+(i+1);
             }
-            player[i] = new Player(playerName, i, 31, 10);
+            player[i] = new Player(playerName, i, 31);
             uiController.addUIPlayer(player[i], number);
         }
         System.out.println("SetupPlayers completed.");
@@ -128,7 +128,7 @@ public class Game {
 
     public void updatePlayer(Player player) {
         if (startPassed(player, die.getFace())) {
-            player.getMoney().addAmount(3);
+            player.getMoney().addAmount(2);
         }
         LogicField field;
         field = fields.getField(player.getPlayerPos());
@@ -195,17 +195,12 @@ public class Game {
         if (field.getOwner() == null) {
             if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
                 player.getMoney().addAmount(-field.getRent());
-                field.setOwner(player);
-            }
+                field.setOwner(player);            }
         } else if (field.getOwner() == player && field.getBuildings() < 3) {
-            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy one for 2 kr?", "No", "Yes").equals("Yes")) {
-                if (player.getBuildings().getAmount() > 0) {
-                    field.addBuilding();
-                    player.getMoney().addAmount(-2);
-                    player.getBuildings().addAmount(-2);
-                } else {
-                    uiController.writeMessage("You have "+player.getBuildings().getAmount()+" buildings and can't build.");
-                }
+            int buildingPrice = field.getRent()+1;
+            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy one for "+buildingPrice+" kr?", "No", "Yes").equals("Yes")) {
+                field.addBuilding();
+                player.getMoney().addAmount(-buildingPrice);
             }
         } else {
             uiController.writeMessage(field.getOwner().getName()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
