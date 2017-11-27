@@ -173,6 +173,11 @@ public class Game {
     public void chanceFieldEffect(Player player, LogicChance field) {
     }
 
+    /**
+     * Logic for what happens when a player lands on a field type object LogicGoToJail.
+     * @param player the player which lands on the object field.
+     * @param field the specific object of LogicGoToJail, the player lands on.
+     */
     public void goToJailFieldEffect(Player player, LogicGoToJail field) {
         uiController.writeMessage("You go to jail and pays a ticket of 3 kr.");
         uiController.jailPlayer(player, field.getJailLocation());
@@ -181,6 +186,11 @@ public class Game {
         ((LogicParking)fields.getField(12)).addValue(field.getTicket());
     }
 
+    /**
+     * Logic for what happens when a player lands on a field type object LogicStreet.
+     * @param player the player which lands on the object field.
+     * @param field the specific object of LogicStreet, the player lands on.
+     */
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null) {
             if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
