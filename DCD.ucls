@@ -84,7 +84,7 @@
   </class>  
   <class id="10" language="java" name="juniorMatador.UIController" project="CDIO3" 
     file="/CDIO3/src/juniorMatador/UIController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="606" y="256"/>    
+    <position height="-1" width="-1" x="591" y="174"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
