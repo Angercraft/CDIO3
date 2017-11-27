@@ -15,8 +15,8 @@ public class FieldController {
 
     private void createFields() {
         fields[0] = new LogicStart(0);
-        fields[1] = new LogicStreet(1,1,Color.YELLOW.darker());
-        fields[2] = new LogicStreet(2,1,Color.YELLOW.darker());
+        fields[1] = new LogicStreet(1,1,Color.ORANGE);
+        fields[2] = new LogicStreet(2,1,Color.ORANGE);
         fields[3] = new LogicChance(3);
         fields[4] = new LogicStreet(4,1,Color.BLUE.brighter());
         fields[5] = new LogicStreet(5,1,Color.BLUE.brighter());
@@ -33,8 +33,8 @@ public class FieldController {
         fields[16] = new LogicStreet(16,3,Color.YELLOW);
         fields[17] = new LogicStreet(17,3,Color.YELLOW);
         fields[18] = new LogicGoToJail(18);
-        fields[19] = new LogicStreet(19,4,Color.GREEN.darker());
-        fields[20] = new LogicStreet(20,4,Color.GREEN.darker());
+        fields[19] = new LogicStreet(19,4,Color.GREEN);
+        fields[20] = new LogicStreet(20,4,Color.GREEN);
         fields[21] = new LogicChance(21);
         fields[22] = new LogicStreet(22,5,Color.BLUE.darker());
         fields[23] = new LogicStreet(23,5,Color.BLUE.darker());

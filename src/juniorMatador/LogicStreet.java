@@ -34,6 +34,10 @@ public class LogicStreet extends LogicField {
         return value;
     }
 
+    public void setValue(int value) {
+        this.value = value;
+    }
+
     public void addBuilding() {
         buildings++;
     }

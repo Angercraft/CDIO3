@@ -9,6 +9,7 @@ public class Game {
     private Player[] player;
     private Die die = new Die();
     private FieldController fields = new FieldController();
+    private ChanceController chanceCards = new ChanceController();
 
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
@@ -171,7 +172,86 @@ public class Game {
     }
 
     public void chanceFieldEffect(Player player, LogicChance field) {
+        Random rand = new Random();
+        int cardNum = rand.nextInt(14);
+        String type = chanceCards.getCard(cardNum).getType();
+        ChanceBase card = chanceCards.getCard(cardNum);
+        switch (type) {
+            case "START":
+                chanceStart(player,(ChanceStart) card);
+                break;
+            case "MOVETO":
+                chanceMoveTo(player, (ChanceMoveTo) card);
+                break;
+            case "FREEFIELD":
+                chanceFreeField(player, (ChanceFreeField) card);
+                break;
+            case "MONEY":
+                chanceMoney(player, (ChanceMoney) card);
+                break;
+            case "SKIPJAIL":
+                chanceSkipJail(player, (ChanceSkipJail) card);
+                break;
+            default:
+        }
     }
+
+    public void chanceStart(Player player, ChanceStart card) {
+        uiController.displayChanceCard(card.getMessage());
+        int stepsToStart = uiController.fields().length - player.getPlayerPos();
+        updatePlayerPos(player, stepsToStart);
+        player.getMoney().addAmount(7);
+    }
+
+    public void chanceMoveTo(Player player, ChanceMoveTo card) {
+        uiController.displayChanceCard(card.getMessage());
+        if (card.getMoveAmount() == 24) {
+            int stepsToField = uiController.fields().length - player.getPlayerPos() - 1;
+            updatePlayerPos(player, stepsToField);
+        } else {
+            updatePlayerPos(player, card.getMoveAmount());
+        }
+        updatePlayer(player);
+    }
+
+    public void chanceFreeField(Player player, ChanceFreeField card) {
+        uiController.displayChanceCard(card.getMessage());
+        int fieldNum = 0;
+        for (int i = player.getPlayerPos(); i < uiController.fields().length; i++) {
+            if (fields.getField(i).getType().equals("STREET")) {
+                LogicStreet field = (LogicStreet) fields.getField(i);
+                if (field.getColor().equals(card.getColor1()) || field.getColor().equals(card.getColor2())) {
+                    fieldNum = i;
+                    break;
+                }
+            }
+        }
+        if (fieldNum == 0) {
+            for (int i = 0; i < uiController.fields().length; i++) {
+                if (fields.getField(i).getType().equals("STREET")) {
+                    LogicStreet field = (LogicStreet) fields.getField(i);
+                    if (field.getColor().equals(card.getColor1()) || field.getColor().equals(card.getColor2())) {
+                        fieldNum = i;
+                        break;
+                    }
+                }
+            }
+        }
+        int stepsToField = uiController.fields().length - player.getPlayerPos() + fieldNum;
+        updatePlayerPos(player, stepsToField);
+        if (((LogicStreet)fields.getField(player.getPlayerPos())).getOwner() == null) {
+            ((LogicStreet)fields.getField(player.getPlayerPos())).setOwner(player);
+        }
+    }
+
+    public void chanceMoney(Player player, ChanceMoney card) {
+
+    }
+
+    public void chanceSkipJail(Player player, ChanceSkipJail card) {
+
+    }
+
 
     /**
      * Logic for what happens when a player lands on a field type object LogicGoToJail.
@@ -192,7 +272,7 @@ public class Game {
      * @param field the specific object of LogicStreet, the player lands on.
      */
     public void streetFieldEffect(Player player, LogicStreet field) {
-        if (field.getOwner() == null) {
+        if (field.getOwner() == null && player.getMoney().getAmount() >= field.getRent()) {
             if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
                 player.getMoney().addAmount(-field.getRent());
                 field.setOwner(player);            }
