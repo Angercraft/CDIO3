@@ -7,7 +7,7 @@ import java.util.Random;
 public class Game {
 
     private UIController uiController = new UIController();
-    private Player[] player;
+    private Player[] players;
     private Die die = new Die();
     private FieldController fields = new FieldController();
     private ChanceController chanceCards = new ChanceController();
@@ -28,7 +28,7 @@ public class Game {
                 }
                 newGame();
                 activePlayer = startPlayer();
-                uiController.writeMessage("First player is " + activePlayer.getName());
+                uiController.writeMessage("Første spiller er " + activePlayer.getName());
             }
             activePlayer = changePlayer();
         }
@@ -36,10 +36,10 @@ public class Game {
     }
 
     public boolean checkWinner() {
-        for (Player player: player) {
+        for (Player player: players) {
             if (player.getMoney().getAmount() == 0) {
                 Player winner = getWinner();
-                uiController.writeMessage(player.getName()+" is broke. The winner is "+winner.getName()+" with "+winner.getMoney().getAmount()+" kr.");
+                uiController.writeMessage(player.getName()+" har ikke flere penge. Vinderen er "+winner.getName()+" med "+winner.getMoney().getAmount()+" kr.");
                 return true;
             }
         }
@@ -51,16 +51,16 @@ public class Game {
      * @return object of type Player, who is the winner.
      */
     public Player getWinner() {
-        Player[] sortByWinner = new Player[player.length];
-        int[] scores = new int[player.length];
+        Player[] sortByWinner = new Player[players.length];
+        int[] scores = new int[players.length];
         for (int i = 0 ; i < scores.length ; i++) {
-            scores[i] = player[i].getMoney().getAmount();
+            scores[i] = players[i].getMoney().getAmount();
         }
         Arrays.sort(scores);
         for (int i = 0 ; i < scores.length ; i++) {
-            for (int j = 0 ; j < player.length ; j++) {
-                if (player[j].getMoney().getAmount() == scores[i]) {
-                    sortByWinner[i] = player[j];
+            for (int j = 0 ; j < players.length ; j++) {
+                if (players[j].getMoney().getAmount() == scores[i]) {
+                    sortByWinner[i] = players[j];
                 }
             }
         }
@@ -68,11 +68,11 @@ public class Game {
             Random rand = new Random();
             if (scores.length > 2) {
                 if (scores[1] == scores[2]) {
-                    uiController.writeMessage("3 winners found. Picking winner by random.");
+                    uiController.writeMessage("3 vindere fundet. Vinderen vælges ved lodtrækning.");
                     return sortByWinner[rand.nextInt(3)+1];
                 }
             }
-            uiController.writeMessage("Both "+sortByWinner[0].getName()+" and "+sortByWinner[1].getName()+" has the same score. Picking one of them by random.");
+            uiController.writeMessage("Både "+sortByWinner[0].getName()+" og "+sortByWinner[1].getName()+" har samme score. Vinderen bliver valgt ved lodtrækning.");
             return sortByWinner[rand.nextInt(2)+1];
         }
         return sortByWinner[0];
@@ -82,7 +82,7 @@ public class Game {
      * Resets the game values to prepare for a new game.
      */
     public void newGame() {
-        for (Player aPlayer : player) {
+        for (Player aPlayer : players) {
             aPlayer.reset();
             uiController.resetUIPlayers(aPlayer.getMoney().getAmount());
             for (int i = 0 ; i < fields.getFields().length ; i++) {
@@ -100,11 +100,11 @@ public class Game {
      * @return boolean value, true for new game, false to quit.
      */
     public boolean checkNewGame() {
-        String choice = uiController.requestPlayerChoice("Would you like to play again?", "No", "Yes");
+        String choice = uiController.requestPlayerChoice("Vil i gerne spille igen?", "Nej", "Ja");
         switch (choice) {
-            case "Yes":
+            case "Ja":
                 return true;
-            case "No":
+            case "Nej":
                 return false;
             default:
                 return false;
@@ -125,16 +125,15 @@ public class Game {
     public void setupPlayers() {
         String playerName;
         int number = uiController.requestNumberOfPlayers();
-        player = new Player[number];
+        players = new Player[number];
         for (int i = 0 ; i < number ; i++) {
-            playerName = uiController.requestStringInput("Player "+(i+1)+" please input name.");
+            playerName = uiController.requestStringInput("Spiller "+(i+1)+", angiv venligst dit navn.");
             if (playerName.equals("")) {
                 playerName = "Player"+(i+1);
             }
-            player[i] = new Player(playerName, i, 31);
-            uiController.addUIPlayer(player[i], number);
+            players[i] = new Player(playerName, i, 31);
+            uiController.addUIPlayer(players[i], number);
         }
-        System.out.println("SetupPlayers completed.");
     }
 
     /**
@@ -162,7 +161,7 @@ public class Game {
                 goToJailFieldEffect(player, (LogicGoToJail) field);
                 break;
             case "CHANCE":
-                chanceFieldEffect(player, (LogicChance) field);
+                chanceFieldEffect(player);
                 break;
             case "PARKING":
                 parkingFieldEffect(player, (LogicParking) field);
@@ -213,9 +212,8 @@ public class Game {
     /**
      * When a player lands on a chance field, a card is choosen at random. The type of the card determines what effect will be applied to the player.
      * @param player the active player who landed on the field.
-     * @param field the information for the field type LogicChance.
      */
-    public void chanceFieldEffect(Player player, LogicChance field) {
+    public void chanceFieldEffect(Player player) {
         Random rand = new Random();
         int cardNum = rand.nextInt(14);
         String type = chanceCards.getCard(cardNum).getType();
@@ -235,7 +233,7 @@ public class Game {
                 chanceMoney(player, (ChanceMoney) card);
                 break;
             case "SKIPJAIL":
-                chanceSkipJail(player, (ChanceSkipJail) card);
+                chanceSkipJail(player);
                 break;
             default:
         }
@@ -313,18 +311,25 @@ public class Game {
      * @param card the card which was chosen.
      */
     public void chanceMoney(Player player, ChanceMoney card) {
-
+        if (card.getOthersPay()) {
+            int amount = 0;
+            for (Player aPlayer : players) {
+                aPlayer.getMoney().addAmount(-1);
+                amount++;
+            }
+            player.getMoney().addAmount(amount);
+        } else {
+            player.getMoney().addAmount(card.getAmount());
+        }
     }
 
     /**
      * The effect for the chance card type ChanceSkipJail.
      * @param player the active player.
-     * @param card the card which was chosen.
      */
-    public void chanceSkipJail(Player player, ChanceSkipJail card) {
+    public void chanceSkipJail(Player player) {
         player.setSkipJail(true);
     }
-
 
     /**
      * Logic for what happens when a player lands on a field type object LogicGoToJail.
@@ -338,9 +343,10 @@ public class Game {
             player.setPlayerPos(field.getJailLocation());
             player.getMoney().addAmount(-field.getTicket());
             ((LogicParking)fields.getField(12)).addValue(field.getTicket());
+        } else {
+            uiController.writeMessage("Dit 'undgå fængsel's kort reddede dig fra fængsel.");
+            player.setSkipJail(false);
         }
-        uiController.writeMessage("Dit 'undgå fængsel's kort reddede dig fra fængsel.");
-        player.setSkipJail(false);
     }
 
     /**
@@ -350,17 +356,17 @@ public class Game {
      */
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null && player.getMoney().getAmount() >= field.getRent()) {
-            if (uiController.requestPlayerChoice("Vil du købe denne grund?", "No", "Yes").equals("Yes")) {
+            if (uiController.requestPlayerChoice("Vil du købe denne grund?", "Nej", "Ja").equals("Ja")) {
                 player.getMoney().addAmount(-field.getRent());
                 field.setOwner(player);            }
         } else if (field.getOwner() == player && field.getBuildings() < 3) {
             int buildingPrice = field.getRent()+1;
-            if (uiController.requestPlayerChoice("You have "+field.getBuildings()+" buildings on this field. Would you like to buy one for "+buildingPrice+" kr?", "No", "Yes").equals("Yes")) {
+            if (uiController.requestPlayerChoice("Du har "+field.getBuildings()+" bygninger på dette felt. Vil du købe en for "+buildingPrice+" kr?", "Nej", "Ja").equals("Ja")) {
                 field.addBuilding();
                 player.getMoney().addAmount(-buildingPrice);
             }
         } else {
-            uiController.writeMessage(field.getOwner().getName()+" already owns that place. You pay "+field.getRent()+" in rent to them.");
+            uiController.writeMessage(field.getOwner().getName()+" ejer allerede dette felt. Du betaler "+field.getRent()+" kr. i leje.");
             player.getMoney().addAmount(-field.getRent());
             field.getOwner().getMoney().addAmount(field.getRent());
             uiController.updatePlayerBalance(field.getOwner());
@@ -373,11 +379,11 @@ public class Game {
      */
     public Player startPlayer() {
         Random rand = new Random();
-        int numOfPlayers = player.length;
+        int numOfPlayers = players.length;
         int startPlayer = rand.nextInt(numOfPlayers);
         System.out.println("Player "+(startPlayer+1)+" is first.");
-        player[startPlayer].setPlayerTurn(true);
-        return player[startPlayer];
+        players[startPlayer].setPlayerTurn(true);
+        return players[startPlayer];
     }
 
     /**
@@ -385,15 +391,15 @@ public class Game {
      * @return the next Player in the array of Player objects.
      */
     public Player changePlayer() {
-        for (int i = 0 ; i < player.length ; i++) {
-            if (player[i].getPlayerTurn()) {
-                player[i].setPlayerTurn(false);
-                if (i == player.length-1) {
-                    player[0].setPlayerTurn(true);
-                    return player[0];
+        for (int i = 0 ; i < players.length ; i++) {
+            if (players[i].getPlayerTurn()) {
+                players[i].setPlayerTurn(false);
+                if (i == players.length-1) {
+                    players[0].setPlayerTurn(true);
+                    return players[0];
                 } else {
-                    player[i+1].setPlayerTurn(true);
-                    return player[i+1];
+                    players[i+1].setPlayerTurn(true);
+                    return players[i+1];
                 }
             }
         }
