@@ -44,4 +44,7 @@ public class FieldController {
         return fields[value];
     }
 
+    public LogicField[] getFields() {
+        return fields;
+    }
 }

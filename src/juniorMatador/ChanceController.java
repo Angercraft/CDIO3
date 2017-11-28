@@ -17,7 +17,7 @@ public class ChanceController {
         cards[3] = new ChanceMoveTo("Ryk 1 felt frem.", "MOVETO", 1);
         cards[4] = new ChanceMoney("Du har spist for meget slik. Betal 2 kr. til banken.", "MONEY", 2, true, false);
         cards[5] = new ChanceFreeField("Ryk frem til et orange eller grønt felt. Hvis det ledigt er det gratis, ellers betal lejen.", "FREEFIELD", Color.ORANGE, Color.GREEN);
-        cards[6] = new ChanceFreeField("Ryk frem til et orange felt. Hvis det ledigt er det gratis, ellers betal lejen.", "FREEFIELD", Color.BLUE.brighter());
+        cards[6] = new ChanceFreeField("Ryk frem til et orange felt. Hvis det ledigt er det gratis, ellers betal lejen.", "FREEFIELD", Color.ORANGE);
         cards[7] = new ChanceSkipJail("Næste gang du du rammer 'Gå i fængsel' feltet, bliver du på feltet og slipper for at betale", "SKIPJAIL");
         cards[8] = new ChanceMoveTo("Ryk frem til Strandpromenaden.", "MOVETO", 24);
         cards[9] = new ChanceMoney("Det er din fødselsdag. Alle giver dig 1 kr.", "MONEY", 1, false, true);

@@ -1,5 +1,6 @@
 package juniorMatador;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -45,6 +46,10 @@ public class Game {
         return false;
     }
 
+    /**
+     * Checks each players score to find the one with the highest score. If more than one winner is found, one of them will be choosen at random.
+     * @return object of type Player, who is the winner.
+     */
     public Player getWinner() {
         Player[] sortByWinner = new Player[player.length];
         int[] scores = new int[player.length];
@@ -73,13 +78,27 @@ public class Game {
         return sortByWinner[0];
     }
 
+    /**
+     * Resets the game values to prepare for a new game.
+     */
     public void newGame() {
         for (Player aPlayer : player) {
             aPlayer.reset();
             uiController.resetUIPlayers(aPlayer.getMoney().getAmount());
+            for (int i = 0 ; i < fields.getFields().length ; i++) {
+                String type = fields.getFields()[i].getType();
+                if (type.equals("STREET")) {
+                    ((LogicStreet)fields.getField(i)).setOwner(null);
+                    ((LogicStreet)fields.getField(i)).setBuildings(0);
+                }
+            }
         }
     }
 
+    /**
+     * Checks if the players want to start a new game.
+     * @return boolean value, true for new game, false to quit.
+     */
     public boolean checkNewGame() {
         String choice = uiController.requestPlayerChoice("Would you like to play again?", "No", "Yes");
         switch (choice) {
@@ -127,10 +146,11 @@ public class Game {
         updatePlayerPos(player, die.getFace());
     }
 
+    /**
+     * Updates the player, according to the current field.
+     * @param player the active player.
+     */
     public void updatePlayer(Player player) {
-        if (startPassed(player, die.getFace())) {
-            player.getMoney().addAmount(2);
-        }
         LogicField field;
         field = fields.getField(player.getPlayerPos());
         String type = field.getType();
@@ -151,31 +171,56 @@ public class Game {
         uiController.updatePlayerBalance(player);
     }
 
+    /**
+     * Updates the player position based on the die value.
+     * @param player the active player, who will be moved.
+     * @param sum the sum of all dice used in the game.
+     */
     public void updatePlayerPos(Player player, int sum) {
         int oldPos = player.getPlayerPos();
         int newPos = player.getPlayerPos() + sum;
         if (newPos > uiController.fields().length-1) newPos -= uiController.fields().length;
         player.setPlayerPos(newPos);
+        if (startPassed(oldPos, player.getPlayerPos())) {
+            player.getMoney().addAmount(1000);
+        }
         uiController.setPlayerPos(player.getPlayerNumber(), newPos, oldPos);
     }
 
-    public boolean startPassed(Player player, int value) {
-        return player.getPlayerPos() + value > uiController.fields().length - 1;
+    /**
+     * Checks if the players current field value is larger than the next field value.
+     * @param oldPos the players old field value.
+     * @param newPos the players new field value.
+     * @return true if the old field is bigger than the new, otherwise false.
+     */
+    public boolean startPassed(int oldPos, int newPos) {
+        return newPos < oldPos;
     }
 
+    /**
+     * The effect which executes when a player lands on the parking field.
+     * @param player the active player who landed on the field.
+     * @param field the information for the field type LogicParking.
+     */
     public void parkingFieldEffect(Player player, LogicParking field) {
         if (field.getValue() > 0) {
-            uiController.writeMessage("You got free parking and found some money. You recieve "+field.getValue()+" kr.");
+            uiController.writeMessage("Du fandt nogle penge på parkeringspladsen. Du modtager "+field.getValue()+" kr.");
             player.getMoney().addAmount(field.getValue());
             field.addValue(-field.getValue());
         }
     }
 
+    /**
+     * When a player lands on a chance field, a card is choosen at random. The type of the card determines what effect will be applied to the player.
+     * @param player the active player who landed on the field.
+     * @param field the information for the field type LogicChance.
+     */
     public void chanceFieldEffect(Player player, LogicChance field) {
         Random rand = new Random();
         int cardNum = rand.nextInt(14);
         String type = chanceCards.getCard(cardNum).getType();
         ChanceBase card = chanceCards.getCard(cardNum);
+        die.setFace(0);
         switch (type) {
             case "START":
                 chanceStart(player,(ChanceStart) card);
@@ -196,6 +241,11 @@ public class Game {
         }
     }
 
+    /**
+     * The effect for the chance card type ChanceStart.
+     * @param player the active player.
+     * @param card the card which was chosen.
+     */
     public void chanceStart(Player player, ChanceStart card) {
         uiController.displayChanceCard(card.getMessage());
         int stepsToStart = uiController.fields().length - player.getPlayerPos();
@@ -203,6 +253,11 @@ public class Game {
         player.getMoney().addAmount(7);
     }
 
+    /**
+     * The effect for the chance card type ChanceMoveTo.
+     * @param player the active player.
+     * @param card the card which was chosen.
+     */
     public void chanceMoveTo(Player player, ChanceMoveTo card) {
         uiController.displayChanceCard(card.getMessage());
         if (card.getMoveAmount() == 24) {
@@ -214,6 +269,11 @@ public class Game {
         updatePlayer(player);
     }
 
+    /**
+     * The effect for the chance card type ChanceFreeFoeæd.
+     * @param player the active player.
+     * @param card the card which was chosen.
+     */
     public void chanceFreeField(Player player, ChanceFreeField card) {
         uiController.displayChanceCard(card.getMessage());
         int fieldNum = 0;
@@ -240,16 +300,29 @@ public class Game {
         int stepsToField = uiController.fields().length - player.getPlayerPos() + fieldNum;
         updatePlayerPos(player, stepsToField);
         if (((LogicStreet)fields.getField(player.getPlayerPos())).getOwner() == null) {
+            uiController.writeMessage("Feltet er ledigt og du er nu ejeren!");
             ((LogicStreet)fields.getField(player.getPlayerPos())).setOwner(player);
+        } else {
+            uiController.writeMessage(((LogicStreet)fields.getField(player.getPlayerPos())).getOwner().getName()+" ejer allerede dette felt og du skal betale leje.");
         }
     }
 
+    /**
+     * The effect for the chance card type ChanceMoney.
+     * @param player the active player.
+     * @param card the card which was chosen.
+     */
     public void chanceMoney(Player player, ChanceMoney card) {
 
     }
 
+    /**
+     * The effect for the chance card type ChanceSkipJail.
+     * @param player the active player.
+     * @param card the card which was chosen.
+     */
     public void chanceSkipJail(Player player, ChanceSkipJail card) {
-
+        player.setSkipJail(true);
     }
 
 
@@ -259,11 +332,15 @@ public class Game {
      * @param field the specific object of LogicGoToJail, the player lands on.
      */
     public void goToJailFieldEffect(Player player, LogicGoToJail field) {
-        uiController.writeMessage("You go to jail and pays a ticket of 3 kr.");
-        uiController.jailPlayer(player, field.getJailLocation());
-        player.setPlayerPos(field.getJailLocation());
-        player.getMoney().addAmount(-field.getTicket());
-        ((LogicParking)fields.getField(12)).addValue(field.getTicket());
+        if (!player.getSkipJail()) {
+            uiController.writeMessage("Du ryger i fængsel men betaler straffen på 3 kr.");
+            uiController.jailPlayer(player, field.getJailLocation());
+            player.setPlayerPos(field.getJailLocation());
+            player.getMoney().addAmount(-field.getTicket());
+            ((LogicParking)fields.getField(12)).addValue(field.getTicket());
+        }
+        uiController.writeMessage("Dit 'undgå fængsel's kort reddede dig fra fængsel.");
+        player.setSkipJail(false);
     }
 
     /**
@@ -273,7 +350,7 @@ public class Game {
      */
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null && player.getMoney().getAmount() >= field.getRent()) {
-            if (uiController.requestPlayerChoice("Would you like to buy this property?", "No", "Yes").equals("Yes")) {
+            if (uiController.requestPlayerChoice("Vil du købe denne grund?", "No", "Yes").equals("Yes")) {
                 player.getMoney().addAmount(-field.getRent());
                 field.setOwner(player);            }
         } else if (field.getOwner() == player && field.getBuildings() < 3) {
