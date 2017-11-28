@@ -8,7 +8,7 @@ public class Game {
     private Player[] player;
     private Die die = new Die();
     private FieldController fields = new FieldController();
-    private ChanceCards card;
+    private Deck deck = new Deck(); 
     /**
      * Method to start it all. Prepares the activePlayer, runs the setupGame method and runs a loop which uses rollDice method for the active player and changes the active player to the next in line.
      */
@@ -151,6 +151,7 @@ public class Game {
     }
 
     public void chanceFieldEffect(Player player, LogicChance field) {
+    	cardEffect();
     }
 
     public void goToJailFieldEffect(Player player, LogicGoToJail field) {
@@ -220,11 +221,49 @@ public class Game {
     }
     
     public void cardEffect() {
-    	card.drawCard();
+    	int i = findActivePlayer();
+    	ChanceCards card = deck.drawCard();
 		if (!card.message.isEmpty()) {
 			uiController.writeMessage(card.message);
 		}
-		if (card.movePiece != null) {}
+		if (card.transaction != 0) {
+			player[i].getMoney().addAmount(card.transaction);
+		}
+		if (card.movePiece != 0) {
+		    updatePlayerPos(player[i], card.movePiece);
+			if (startPassed(player[i], card.movePiece)) {
+	            player[i].getMoney().addAmount(3);
+	        }
+		}
+		/*if (card.moveToColorField != null) {
+			int x = player[i].getPlayerPos();
+			int y = uiController.fields().length + x;
+			for (x = player[i].getPlayerPos() ; x < y ; x++) {
+				
+				if (fields.getColor) {}
+			}	
+		}*/
+		if (card.moveToFieldNumber != -1) {
+			if (player[i].getPlayerPos() < card.moveToFieldNumber) {
+				int x = player[i].getPlayerPos() - card.moveToFieldNumber;
+			    updatePlayerPos(player[i], x);
+			} else {
+				int x = player[i].getPlayerPos() - card.moveToFieldNumber;
+				int y = uiController.fields().length - x;
+			    updatePlayerPos(player[i], y);
+			}
+		}
 	}
+    
+    public int findActivePlayer() {
+    	int i;
+    	outerloop:
+		 for (i = 0 ; i < player.length ; i++) {
+            if (player[i].getPlayerTurn() == true) {
+            	break outerloop;
+            }
+		 }
+		 return i;
+    };
     
 }
