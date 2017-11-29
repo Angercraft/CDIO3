@@ -5,14 +5,13 @@ public class Player {
     private boolean playerTurn = false;
     private int playerNumber;
     private int playerPos = 0;
+    private boolean skipJail = false;
     private Money money;
-    private Buildings buildings;
 
-    Player(String name, int playerNumber, int moneyAmount, int buildingsAmount) {
+    Player(String name, int playerNumber, int moneyAmount) {
         this.name = name;
         this.playerNumber = playerNumber;
         money = new Money(moneyAmount);
-        buildings = new Buildings(buildingsAmount);
     }
 
     public String getName() {
@@ -21,17 +20,12 @@ public class Player {
 
     public void reset() {
         money.resetMoney();
-        buildings.reset();
         playerPos = 0;
         playerTurn = false;
     }
 
     public Money getMoney() {
         return money;
-    }
-
-    public Buildings getBuildings() {
-        return buildings;
     }
 
     public int getPlayerNumber() {
@@ -52,6 +46,14 @@ public class Player {
 
     public int getPlayerPos() {
         return playerPos;
+    }
+
+    public void setSkipJail(boolean skipJail) {
+        this.skipJail = skipJail;
+    }
+
+    public boolean getSkipJail() {
+        return skipJail;
     }
 
     @Override
