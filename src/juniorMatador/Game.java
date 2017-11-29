@@ -218,7 +218,7 @@ public class Game {
         int cardNum = rand.nextInt(14);
         String type = chanceCards.getCard(cardNum).getType();
         ChanceBase card = chanceCards.getCard(cardNum);
-        die.setFace(0);
+        die.setFace(1);
         switch (type) {
             case "START":
                 chanceStart(player,(ChanceStart) card);
@@ -299,9 +299,9 @@ public class Game {
         updatePlayerPos(player, stepsToField);
         if (((LogicStreet)fields.getField(player.getPlayerPos())).getOwner() == null) {
             uiController.writeMessage("Feltet er ledigt og du er nu ejeren!");
-            ((LogicStreet)fields.getField(player.getPlayerPos())).setOwner(player);
+            ((LogicStreet)fields.getField(player.getPlayerPos())).setOwner(player.getName());
         } else {
-            uiController.writeMessage(((LogicStreet)fields.getField(player.getPlayerPos())).getOwner().getName()+" ejer allerede dette felt og du skal betale leje.");
+            uiController.writeMessage(((LogicStreet)fields.getField(player.getPlayerPos())).getOwner()+" ejer allerede dette felt og du skal betale leje.");
         }
     }
 
@@ -358,18 +358,18 @@ public class Game {
         if (field.getOwner() == null && player.getMoney().getAmount() >= field.getRent()) {
             if (uiController.requestPlayerChoice("Vil du købe denne grund?", "Nej", "Ja").equals("Ja")) {
                 player.getMoney().addAmount(-field.getRent());
-                field.setOwner(player);            }
-        } else if (field.getOwner() == player && field.getBuildings() < 3) {
+                field.setOwner(player.getName());            }
+        } else if (field.getOwner().equals(player.getName()) && field.getBuildings() < 3) {
             int buildingPrice = field.getRent()+1;
             if (uiController.requestPlayerChoice("Du har "+field.getBuildings()+" bygninger på dette felt. Vil du købe en for "+buildingPrice+" kr?", "Nej", "Ja").equals("Ja")) {
                 field.addBuilding();
                 player.getMoney().addAmount(-buildingPrice);
             }
         } else {
-            uiController.writeMessage(field.getOwner().getName()+" ejer allerede dette felt. Du betaler "+field.getRent()+" kr. i leje.");
+            uiController.writeMessage(field.getOwner()+" ejer allerede dette felt. Du betaler "+field.getRent()+" kr. i leje.");
             player.getMoney().addAmount(-field.getRent());
-            field.getOwner().getMoney().addAmount(field.getRent());
-            uiController.updatePlayerBalance(field.getOwner());
+            getPlayer(field.getOwner()).getMoney().addAmount(field.getRent());
+            uiController.updatePlayerBalance(getPlayer(field.getOwner()));
         }
     }
 
@@ -381,9 +381,20 @@ public class Game {
         Random rand = new Random();
         int numOfPlayers = players.length;
         int startPlayer = rand.nextInt(numOfPlayers);
-        System.out.println("Player "+(startPlayer+1)+" is first.");
         players[startPlayer].setPlayerTurn(true);
         return players[startPlayer];
+    }
+
+    /**
+     * Returns the object of type Player, for the given String name.
+     * @param name
+     * @return
+     */
+    public Player getPlayer(String name) {
+        for (Player aPlayer : players) {
+            if (aPlayer.getName().equals(name)) return aPlayer;
+        }
+        return null;
     }
 
     /**
