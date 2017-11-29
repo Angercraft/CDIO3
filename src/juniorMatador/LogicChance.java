@@ -6,7 +6,4 @@ public class LogicChance extends LogicField {
         super(fieldNo, "CHANCE");
     }
 
-    public void pullChance(Player player) {
-
-    }
 }
