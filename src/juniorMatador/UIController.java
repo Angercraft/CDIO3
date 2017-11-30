@@ -36,7 +36,7 @@ public class UIController {
         if (uiPlayers == null) {
             uiPlayers = new GUI_Player[amountOfPlayers];
         }
-        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.getMoney().getAmount(), requestVehicleType());
+        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.getMoney().getAmount(), requestVehicleType(player.getPlayerNumber()));
         gui.addPlayer(uiPlayers[player.getPlayerNumber()]);
         updatePlayerBalance(player);
     }
@@ -82,6 +82,11 @@ public class UIController {
         gui.setDie(value);
     }
 
+    /**
+     * Moves the players vehicle from the GUI to the jail field.
+     * @param player the player who will be moved.
+     * @param jail the field which functions as the jail.
+     */
     public void jailPlayer(Player player, int jail) {
         int current = player.getPlayerPos();
         uiFields[current].setCar(uiPlayers[player.getPlayerNumber()],false);
@@ -113,10 +118,20 @@ public class UIController {
         return gui.getUserString(message);
     }
 
+    /**
+     * Creates a bottom and dropdown menu on the board, with the message provided, and the options provided. Returns a String for the users choice.
+     * @param message the message which will be written to the players.
+     * @param options the list of options for the dropdown menu.
+     * @return a String with the players choice.
+     */
     public String requestPlayerChoice(String message, String... options) {
         return gui.getUserSelection(message, options);
     }
 
+    /**
+     * Writes a message on the GUI.
+     * @param message the String which will be written.
+     */
     public void writeMessage(String message) {
         gui.showMessage(message);
     }
@@ -125,9 +140,9 @@ public class UIController {
      * Lets user use the GUI, to select one of four GUI_Car types.
      * @return GUI_Car with defined Type
      */
-    public GUI_Car requestVehicleType() {
+    public GUI_Car requestVehicleType(int playerNum) {
         String vehicle = gui.getUserSelection("Hvad køretøj ønsker du?", "Bil", "Racerbil", "Traktor", "UFO");
-        Color color = requestVehicleColor();
+        Color color = getVehicleColor(playerNum);
         switch (vehicle) {
             case "Bil":
                 return new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
@@ -143,19 +158,18 @@ public class UIController {
     }
 
     /**
-     * Lets the user choose one of four colors through the GUI.
+     * Returns the color depending on what number the player is.
      * @return Color
      */
-    public Color requestVehicleColor() {
-        String selection = gui.getUserSelection("Hvad farve skal dit køretøj være?", "Blå", "Rød", "Grøn", "Gul");
-        switch (selection) {
-            case "Blå":
+    public Color getVehicleColor(int playerNum) {
+        switch (playerNum) {
+            case 0:
                 return Color.BLUE;
-            case "Rød":
+            case 1:
                 return Color.RED;
-            case "Grøn":
+            case 2:
                 return Color.GREEN;
-            case "Gul":
+            case 3:
                 return Color.YELLOW;
             default:
                 return Color.BLUE;
