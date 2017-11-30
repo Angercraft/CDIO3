@@ -1,6 +1,8 @@
+package test;
+
 import static org.junit.Assert.*;
 
-import java.util.Set;
+import juniorMatador.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,9 +10,11 @@ import org.junit.Test;
 
 public class GameTest {
 
+	private Game game;
+
 	@Before
 	public void setUp() throws Exception {
-		firstGame = new Game(); 
+		game = new Game();
 	}
 
 	@After
@@ -19,11 +23,8 @@ public class GameTest {
 
 	@Test
 	public void testStartPassed() {
-        Game game = new Game();
-        int oldPos = 38;
-        int newPos = 3; 
         boolean expected = true;
-        boolean actual = game.startPassed(int oldPos, int newPos)
+        boolean actual = game.startPassed(38, 3 );
         assertEquals("New position is larger than old position", expected, actual);
 		
 	}
