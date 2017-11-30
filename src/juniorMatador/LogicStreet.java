@@ -6,7 +6,7 @@ public class LogicStreet extends LogicField {
 
     private int value;
     private Color color;
-    private Player owner;
+    private String owner;
     private int buildings;
 
     public LogicStreet(int fieldNo, int value, Color color) {
@@ -15,11 +15,15 @@ public class LogicStreet extends LogicField {
         this.color = color;
     }
 
-    public void setOwner(Player owner) {
+    /**
+     * Sets an object Player as the owner of the field.
+     * @param owner an object of Player, which is connected as the owner.
+     */
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
-    public Player getOwner() {
+    public String getOwner() {
         return owner;
     }
 
@@ -32,6 +36,14 @@ public class LogicStreet extends LogicField {
             return value * buildings;
         }
         return value;
+    }
+
+    public void setBuildings(int number) {
+        if (number >= 0) {
+            buildings = number;
+        } else {
+            buildings = 0;
+        }
     }
 
     public void addBuilding() {

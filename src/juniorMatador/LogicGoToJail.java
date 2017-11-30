@@ -9,10 +9,6 @@ public class LogicGoToJail extends LogicField {
         super(fieldNo, "GOTOJAIL");
     }
 
-    public void setTicket(int ticket) {
-        this.ticket = ticket;
-    }
-
     public int getTicket() {
         return ticket;
     }

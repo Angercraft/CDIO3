@@ -5,6 +5,7 @@ public class Player {
     private boolean playerTurn = false;
     private int playerNumber;
     private int playerPos = 0;
+    private boolean skipJail = false;
     private Money money;
 
     public Player(String name, int playerNumber, int moneyAmount) {
@@ -46,6 +47,14 @@ public class Player {
 
     public int getPlayerPos() {
         return playerPos;
+    }
+
+    public void setSkipJail(boolean skipJail) {
+        this.skipJail = skipJail;
+    }
+
+    public boolean getSkipJail() {
+        return skipJail;
     }
 
     @Override

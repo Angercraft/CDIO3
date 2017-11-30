@@ -24,7 +24,6 @@ public class UIController {
         for (GUI_Player uiPlayer : uiPlayers) {
             uiFields[0].setCar(uiPlayer, true);
         }
-        System.out.println("Done setting players.");
         gui.setDie(rand.nextInt(6)+1);
     }
 
@@ -37,10 +36,9 @@ public class UIController {
         if (uiPlayers == null) {
             uiPlayers = new GUI_Player[amountOfPlayers];
         }
-        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.getMoney().getAmount(), requestVehicleType());
+        uiPlayers[player.getPlayerNumber()] = new GUI_Player(player.getName(), player.getMoney().getAmount(), requestVehicleType(player.getPlayerNumber()));
         gui.addPlayer(uiPlayers[player.getPlayerNumber()]);
         updatePlayerBalance(player);
-        System.out.println("Player added to UI. At: "+player.getPlayerNumber());
     }
 
     /**
@@ -84,6 +82,11 @@ public class UIController {
         gui.setDie(value);
     }
 
+    /**
+     * Moves the players vehicle from the GUI to the jail field.
+     * @param player the player who will be moved.
+     * @param jail the field which functions as the jail.
+     */
     public void jailPlayer(Player player, int jail) {
         int current = player.getPlayerPos();
         uiFields[current].setCar(uiPlayers[player.getPlayerNumber()],false);
@@ -115,10 +118,20 @@ public class UIController {
         return gui.getUserString(message);
     }
 
+    /**
+     * Creates a bottom and dropdown menu on the board, with the message provided, and the options provided. Returns a String for the users choice.
+     * @param message the message which will be written to the players.
+     * @param options the list of options for the dropdown menu.
+     * @return a String with the players choice.
+     */
     public String requestPlayerChoice(String message, String... options) {
         return gui.getUserSelection(message, options);
     }
 
+    /**
+     * Writes a message on the GUI.
+     * @param message the String which will be written.
+     */
     public void writeMessage(String message) {
         gui.showMessage(message);
     }
@@ -127,15 +140,15 @@ public class UIController {
      * Lets user use the GUI, to select one of four GUI_Car types.
      * @return GUI_Car with defined Type
      */
-    public GUI_Car requestVehicleType() {
-        String vehicle = gui.getUserSelection("What vehicle would you like?", "Car", "Racecar", "Tractor", "UFO");
-        Color color = requestVehicleColor();
+    public GUI_Car requestVehicleType(int playerNum) {
+        String vehicle = gui.getUserSelection("Hvad køretøj ønsker du?", "Bil", "Racerbil", "Traktor", "UFO");
+        Color color = getVehicleColor(playerNum);
         switch (vehicle) {
-            case "car":
+            case "Bil":
                 return new GUI_Car(color, color, GUI_Car.Type.CAR, GUI_Car.Pattern.FILL);
-            case "Racecar":
+            case "Racerbil":
                 return new GUI_Car(color, color, GUI_Car.Type.RACECAR, GUI_Car.Pattern.FILL);
-            case "Tractor":
+            case "Traktor":
                 return new GUI_Car(color, color, GUI_Car.Type.TRACTOR, GUI_Car.Pattern.FILL);
             case "UFO":
                 return new GUI_Car(color, color, GUI_Car.Type.UFO, GUI_Car.Pattern.FILL);
@@ -145,19 +158,18 @@ public class UIController {
     }
 
     /**
-     * Lets the user choose one of four colors through the GUI.
+     * Returns the color depending on what number the player is.
      * @return Color
      */
-    public Color requestVehicleColor() {
-        String selection = gui.getUserSelection("What color would you like the vehicle in?", "Blue", "Red", "Green", "Yellow");
-        switch (selection) {
-            case "Blue":
+    public Color getVehicleColor(int playerNum) {
+        switch (playerNum) {
+            case 0:
                 return Color.BLUE;
-            case "Red":
+            case 1:
                 return Color.RED;
-            case "Green":
+            case 2:
                 return Color.GREEN;
-            case "Yellow":
+            case 3:
                 return Color.YELLOW;
             default:
                 return Color.BLUE;
@@ -177,9 +189,9 @@ public class UIController {
      */
     public GUI_Field[] fields() {
         GUI_Field[] fields = new GUI_Field[24];
-        fields[0] = new GUI_Start("Start", "", "Every time you pass Start, you recieve 2 kr.", Color.GREEN, Color.BLACK);
-        fields[1] = new GUI_Street("Burgerbaren", "", "Få en burger på parkens bedste burgerbar. ('Bedste' nomineret af egen resturant.)", "1", Color.YELLOW.darker(), Color.BLACK);
-        fields[2] = new GUI_Street("Pizzariaet", "", "Hvis munden nu ikke er stor nok til den burger.", "1", Color.YELLOW.darker(), Color.BLACK);
+        fields[0] = new GUI_Start("Start", "", "Hver gang du passerer start, modtager du 2 kr.", Color.GREEN.darker(), Color.BLACK);
+        fields[1] = new GUI_Street("Burgerbaren", "", "Få en burger på parkens bedste burgerbar. ('Bedste' nomineret af egen resturant.)", "1", Color.ORANGE, Color.BLACK);
+        fields[2] = new GUI_Street("Pizzariaet", "", "Hvis munden nu ikke er stor nok til den burger.", "1", Color.ORANGE, Color.BLACK);
         fields[3] = new GUI_Chance("?", "", "Træk et chancekort og følg dets anvisninger.", Color.WHITE, Color.BLACK);
         fields[4] = new GUI_Street("Slikbutikken", "", "Til den lille slikmund.", "1", Color.BLUE.brighter(), Color.BLACK);
         fields[5] = new GUI_Street("Iskiosken", "", "Hjælper når solen er fremme.", "1", Color.BLUE.brighter(), Color.BLACK);
@@ -196,8 +208,8 @@ public class UIController {
         fields[16] = new GUI_Street("Legetøjsbutikken", "", "Hvem siger man ikke kan købe kærlighed.", "3", Color.YELLOW, Color.BLACK);
         fields[17] = new GUI_Street("Dyrehandlen", "", "Hvis familien nu ikke er stor nok.", "3", Color.YELLOW, Color.BLACK);
         fields[18] = new GUI_Shipping(); fields[18].setTitle("Gå i fængsel"); fields[18].setSubText("");
-        fields[19] = new GUI_Street("Bowlinghallen", "", "Når far skal vise sig.", "4", Color.GREEN.darker(), Color.BLACK);
-        fields[20] = new GUI_Street("Zoo", "", "Det eneste sted dine forældre tillader dyr.", "4", Color.GREEN.darker(), Color.BLACK);
+        fields[19] = new GUI_Street("Bowlinghallen", "", "Når far skal vise sig.", "4", Color.GREEN, Color.BLACK);
+        fields[20] = new GUI_Street("Zoo", "", "Det eneste sted dine forældre tillader dyr.", "4", Color.GREEN, Color.BLACK);
         fields[21] = new GUI_Chance("?", "", "Træk et chancekort og følg dets anvisninger.", Color.WHITE, Color.BLACK);
         fields[22] = new GUI_Street("Vandlandet", "", "Samme som poolen, bare dyrer.", "5", Color.BLUE.darker(), Color.WHITE);
         fields[23] = new GUI_Street("Strandpromenaden", "", "Sand. Alle. Steder.", "5", Color.BLUE.darker(), Color.WHITE);
