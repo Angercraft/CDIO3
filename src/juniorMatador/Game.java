@@ -236,7 +236,7 @@ public class Game {
                 chanceMoney(player, (ChanceMoney) card);
                 break;
             case "SKIPJAIL":
-                chanceSkipJail(player);
+                chanceSkipJail(player, (ChanceSkipJail) card);
                 break;
             default:
         }
@@ -314,6 +314,7 @@ public class Game {
      * @param card the card which was chosen.
      */
     public void chanceMoney(Player player, ChanceMoney card) {
+        uiController.displayChanceCard(card.getMessage());
         if (card.getOthersPay()) {
             int amount = 0;
             for (Player aPlayer : players) {
@@ -330,7 +331,8 @@ public class Game {
      * The effect for the chance card type ChanceSkipJail.
      * @param player the active player.
      */
-    public void chanceSkipJail(Player player) {
+    public void chanceSkipJail(Player player, ChanceSkipJail card) {
+        uiController.displayChanceCard(card.getMessage());
         player.setSkipJail(true);
     }
 
