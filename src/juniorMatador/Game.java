@@ -35,6 +35,10 @@ public class Game {
         uiController.closeUI();
     }
 
+    /**
+     * Checks if any of the Player objects in an array has zero money in the connected Money object.
+     * @return true of an object Player has zero in the connected Money object. If no one with zero is found, return false.
+     */
     public boolean checkWinner() {
         for (Player player: players) {
             if (player.getMoney().getAmount() == 0) {
@@ -218,7 +222,6 @@ public class Game {
         int cardNum = rand.nextInt(14);
         String type = chanceCards.getCard(cardNum).getType();
         ChanceBase card = chanceCards.getCard(cardNum);
-        die.setFace(1);
         switch (type) {
             case "START":
                 chanceStart(player,(ChanceStart) card);
