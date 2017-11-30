@@ -36,13 +36,13 @@ public class PlayerTest {
 	
 	@Test
 	public void testGetPlayerTurn() {
-		assertEquals("gotten player turn doesn't meet expectations", testPlayer.getPlayerTurn()==false);
+		assertEquals("gotten player turn doesn't meet expectations", !testPlayer.getPlayerTurn());
 	}
 	
 	@Test
 	public void testSetPlayerturn() {
 		testPlayer.setPlayerTurn(true);
-		assertEquals("not possible to set player turn", testPlayer.getPlayerTurn()==true);
+		assertEquals("not possible to set player turn", testPlayer.getPlayerTurn());
 	}
 	
 	//Test whether it's possible to set the player location.
