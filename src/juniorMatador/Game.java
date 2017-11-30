@@ -1,7 +1,7 @@
 package juniorMatador;
 
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class Game {
@@ -56,11 +56,11 @@ public class Game {
      */
     public Player getWinner() {
         Player[] sortByWinner = new Player[players.length];
-        int[] scores = new int[players.length];
+        Integer[] scores = new Integer[players.length];
         for (int i = 0 ; i < scores.length ; i++) {
             scores[i] = players[i].getMoney().getAmount();
         }
-        Arrays.sort(scores);
+        Arrays.sort(scores, Collections.reverseOrder());
         for (int i = 0 ; i < scores.length ; i++) {
             for (int j = 0 ; j < players.length ; j++) {
                 if (players[j].getMoney().getAmount() == scores[i]) {
@@ -89,12 +89,12 @@ public class Game {
         for (Player aPlayer : players) {
             aPlayer.reset();
             uiController.resetUIPlayers(aPlayer.getMoney().getAmount());
-            for (int i = 0 ; i < fields.getFields().length ; i++) {
-                String type = fields.getFields()[i].getType();
-                if (type.equals("STREET")) {
-                    ((LogicStreet)fields.getField(i)).setOwner(null);
-                    ((LogicStreet)fields.getField(i)).setBuildings(0);
-                }
+        }
+        for (int i = 0 ; i < fields.getFields().length ; i++) {
+            String type = fields.getFields()[i].getType();
+            if (type.equals("STREET")) {
+                ((LogicStreet)fields.getField(i)).setOwner(null);
+                ((LogicStreet)fields.getField(i)).setBuildings(0);
             }
         }
     }
@@ -185,7 +185,7 @@ public class Game {
         if (newPos > uiController.fields().length-1) newPos -= uiController.fields().length;
         player.setPlayerPos(newPos);
         if (startPassed(oldPos, player.getPlayerPos())) {
-            player.getMoney().addAmount(1000);
+            player.getMoney().addAmount(2);
         }
         uiController.setPlayerPos(player.getPlayerNumber(), newPos, oldPos);
     }
@@ -361,12 +361,12 @@ public class Game {
      */
     public void streetFieldEffect(Player player, LogicStreet field) {
         if (field.getOwner() == null && player.getMoney().getAmount() >= field.getRent()) {
-            if (uiController.requestPlayerChoice("Vil du købe denne grund?", "Nej", "Ja").equals("Ja")) {
+            if (uiController.requestPlayerChoice("Vil du købe denne grund?", "Ja", "Nej").equals("Ja")) {
                 player.getMoney().addAmount(-field.getRent());
                 field.setOwner(player.getName());            }
         } else if (field.getOwner().equals(player.getName()) && field.getBuildings() < 3) {
             int buildingPrice = field.getRent()+1;
-            if (uiController.requestPlayerChoice("Du har "+field.getBuildings()+" bygninger på dette felt. Vil du købe en for "+buildingPrice+" kr?", "Nej", "Ja").equals("Ja")) {
+            if (uiController.requestPlayerChoice("Du har "+field.getBuildings()+" bygninger på dette felt. Vil du købe en for "+buildingPrice+" kr?", "Ja", "Nej").equals("Ja")) {
                 field.addBuilding();
                 player.getMoney().addAmount(-buildingPrice);
             }
