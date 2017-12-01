@@ -13,7 +13,7 @@ public class DieTest {
     }
 
     @org.junit.Test
-    public void roll() throws Exception {
+    public void testRoll() throws Exception {
         int min = 1;
         int max = 6;
         for (int i = 0 ; i < 1000 ; i++) {
@@ -24,7 +24,7 @@ public class DieTest {
     }
 
     @org.junit.Test
-    public void setFace() throws Exception {
+    public void testSetFace() throws Exception {
         int expected = 5;
         testDie.setFace(expected);
         int actual = testDie.getFace();

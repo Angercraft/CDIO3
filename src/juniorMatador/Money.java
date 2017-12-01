@@ -5,7 +5,7 @@ public class Money {
     private int amount;
     private int startAmount;
 
-    Money(int amount) {
+    public Money(int amount) {
         this.amount = amount;
         this.startAmount = amount;
     }

@@ -8,7 +8,7 @@ public class Player {
     private boolean skipJail = false;
     private Money money;
 
-    Player(String name, int playerNumber, int moneyAmount) {
+    public Player(String name, int playerNumber, int moneyAmount) {
         this.name = name;
         this.playerNumber = playerNumber;
         money = new Money(moneyAmount);
@@ -23,7 +23,8 @@ public class Player {
         playerPos = 0;
         playerTurn = false;
     }
-
+    
+    //TODO test this somehow
     public Money getMoney() {
         return money;
     }
